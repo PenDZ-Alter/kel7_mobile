@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     Container content = Container(
       child: Column(
         children: <Widget>[
-          // Row for the icons with text labels
+          // Row for the icons with text labels (Lottery, Treasury, etc.)
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
