@@ -12,11 +12,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title,
-          style: TextStyle(
-            fontFamily: 'Times New Roman'
+        appBar: AppBar(
+          title: Text(
+            widget.title,
+            style: TextStyle(fontFamily: 'Times New Roman'),
           ),
+          backgroundColor: Color.fromARGB(255, 218, 179, 6),
+          centerTitle: true,
         ),
         backgroundColor: Color.fromARGB(255, 218, 214, 6),
         centerTitle: true,

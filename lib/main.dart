@@ -43,5 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[],
           ),
         ));
+      home: const HomePage(title: "HAMILTON"),
+      
+    );
   }
 }
