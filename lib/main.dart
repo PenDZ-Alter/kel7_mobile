@@ -15,8 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const HomePage(title: "HAMILTON"),
-      
+      home: const HomePage(title: "H A M I L T O N"),
     );
   }
 }
