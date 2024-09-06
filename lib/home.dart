@@ -55,8 +55,35 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(255, 218, 179, 6),
       ),
       body: Column(
+    AppBar AppbarContent = AppBar(
+      title: Stack(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                Icon(Icons.list),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              widget.title,
+              style: const TextStyle(fontFamily: 'Times New Roman'),
+            ),
+          ),
+          Align(alignment: Alignment.centerRight, child: Text('Sign in')),
+        ],
+      ),
+      backgroundColor: const Color.fromARGB(255, 218, 179, 6)
+    );
+
+    /* Edit content here */
+    Container content = Container(
+      child: Column(
         children: <Widget>[
-          // Row for the icons with text labels
+        // Row for the icons with text labels
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -116,7 +143,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-      ),
+      )
+    );
+
+    return Scaffold(
+      appBar: AppbarContent,
+      body: content,
     );
   }
 }
