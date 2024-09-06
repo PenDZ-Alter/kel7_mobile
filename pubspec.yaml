@@ -84,7 +84,9 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  
+  assets:
+    - assets/Images/Hamilton.jpg
+
   fonts:
     - family: Times New Roman
       fonts:
