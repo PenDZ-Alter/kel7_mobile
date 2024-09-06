@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Hamilton'),
+      home: const HomePage(title: "HAMILTON"),
     );
   }
 }
@@ -43,5 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[],
           ),
         ));
+      home: const HomePage(title: "HAMILTON"),
+      
+    );
   }
 }
