@@ -18,12 +18,14 @@ class _HomePageState extends State<HomePage> {
             fontFamily: 'Times New Roman'
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 218, 179, 6),
+        backgroundColor: Color.fromARGB(255, 218, 214, 6),
         centerTitle: true,
       ),
       body: Column(
         children: <Widget>[
+          // Content here
 
+          
         ],
       )
     );
