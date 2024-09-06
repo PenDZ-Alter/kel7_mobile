@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     Container content = Container(
       child: Column(
         children: <Widget>[
-        // Row for the icons with text labels
+          // Row for the icons with text labels
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -133,13 +133,97 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
+          // New Block of Tickets tile
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Container(
+              color: Colors.black12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/hamilton.jpg', // Ensure this is added to your assets folder and declared in pubspec.yaml
+                    fit: BoxFit.cover,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'August 20',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'New Block of Tickets for Hamilton on Broadway Released!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Eduham Online tile
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Container(
+              color: Colors.black12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Eduham Online',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'The American History curriculum you can do from home!',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  // Button
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Your logic here
+                      },
+                      child: Text('Learn More'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // The rest of your content
-          Text(
-            'This is just a demo',
-            style: TextStyle(
-              fontFamily: 'Arial',
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'This is just a demo',
+              style: TextStyle(
+                fontFamily: 'Arial',
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
