@@ -32,6 +32,25 @@ class _HomePageState extends State<HomePage> {
             ),
             Align(alignment: Alignment.centerRight, child: Text('Sign in')),
           ],
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Icon(Icons.list),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                widget.title,
+                style: const TextStyle(fontFamily: 'Times New Roman'),
+              ),
+            ),
+            Align(alignment: Alignment.centerRight, child: Text('Sign in')),
+          ],
         ),
         backgroundColor: const Color.fromARGB(255, 218, 179, 6),
       ),
