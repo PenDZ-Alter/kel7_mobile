@@ -13,21 +13,91 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title,
-          style: TextStyle(
-            fontFamily: 'Times New Roman'
-          ),
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Icon(Icons.list),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                widget.title,
+                style: const TextStyle(fontFamily: 'Times New Roman'),
+              ),
+            ),
+            Align(alignment: Alignment.centerRight, child: Text('Sign in')),
+          ],
         ),
-        backgroundColor: Color.fromARGB(255, 218, 214, 6),
-        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 218, 179, 6),
       ),
       body: Column(
         children: <Widget>[
-          // Content here
+          // Row for the icons with text labels
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Lottery
+                Column(
+                  children: [
+                    Icon(Icons.bookmark),
+                    SizedBox(height: 8),
+                    Text('Lottery'),
+                  ],
+                ),
+                // Treasury
+                Column(
+                  children: [
+                    Icon(Icons.star),
+                    SizedBox(height: 8),
+                    Text('Treasury'),
+                  ],
+                ),
+                // Trivia
+                Column(
+                  children: [
+                    Icon(Icons.help),
+                    SizedBox(height: 8),
+                    Text('Trivia'),
+                  ],
+                ),
+                // Karaoke
+                Column(
+                  children: [
+                    Icon(Icons.mic),
+                    SizedBox(height: 8),
+                    Text('Karaoke'),
+                  ],
+                ),
+                // Hamcam
+                Column(
+                  children: [
+                    Icon(Icons.camera_alt),
+                    SizedBox(height: 8),
+                    Text('#hamcam'),
+                  ],
+                ),
+              ],
+            ),
+          ),
 
-          
+          // The rest of your content
+          Text(
+            'This is just a demo',
+            style: TextStyle(
+              fontFamily: 'Arial',
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
-      )
+      ),
     );
   }
 }
