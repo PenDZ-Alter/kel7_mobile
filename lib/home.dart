@@ -10,13 +10,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double tileWidth = 300.0;
-  double tileHeight = 200.0;
+  double tileHeight = 300.0;
+
+  // Tambahkan variabel counter untuk menghitung jumlah klik tombol
+  int buttonPressCount = 0;
 
   List<Map<String, dynamic>> tilesData = [
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 1" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 2" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 3" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 4" }
+    {"image": "assets/Images/City3.jpg", "title": "City1"},
+    {"image": "assets/Images/City.jpg", "title": "City2"},
+    {"image": "assets/Images/City1.jpg", "title": "City3"},
+    {"image": "assets/Images/City2.jpg", "title": "City4"}
   ];
 
   @override
@@ -40,31 +43,25 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Align(
-              alignment: Alignment.centerRight, 
-              child: Text('Sign in',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400
-                ),
-              )
-            ),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Sign in',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+                )),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 218, 179, 6));
 
-    /* Edit content here */
     Container content = Container(
       child: Column(
         children: <Widget>[
-          // Row for the icons with text labels (Lottery, Treasury, etc.)
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Lottery
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Lottery Tapped");
                   },
                   child: Column(
@@ -75,8 +72,6 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
-                // Treasury
                 InkWell(
                   onTap: () {
                     print("Treasury Tapped");
@@ -89,10 +84,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
-                // Trivia
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Trivia Tapped");
                   },
                   child: Column(
@@ -103,8 +96,6 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
-                // Karaoke
                 InkWell(
                   onTap: () {
                     print("Karaoke Tapped");
@@ -117,10 +108,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
-                // Hamcam
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Hamcam Tapped");
                   },
                   child: Column(
@@ -134,17 +123,14 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        
-          // Image tiles scrollable horizontal axis
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
-              height: 350.0, // Adjust the height as needed
+              height: 350.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: tilesData.length,
                 itemBuilder: (context, i) {
-                  // Tile Container
                   return Container(
                     width: tileWidth,
                     margin: EdgeInsets.only(right: 8.0),
@@ -152,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image.asset(
                           tilesData[i]['image'],
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           height: tileHeight,
                         ),
                         SizedBox(height: 8),
@@ -165,8 +151,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
-          // Eduham Online tile
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
@@ -193,12 +177,17 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  // Button
+                  // Button "Learn More"
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        // Your logic here
+                        setState(() {
+                          // Setiap tombol dipencet, tambahkan counter
+                          buttonPressCount++;
+                        });
+                        print(
+                            "Tombol telah dipencet sebanyak $buttonPressCount kali");
                       },
                       child: Text('Learn More'),
                     ),
@@ -207,8 +196,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
-          // The rest of your content
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
