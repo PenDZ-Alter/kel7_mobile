@@ -280,7 +280,11 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Container(
-                  color: Colors.black12,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 3.0, color: Color.fromARGB(0, 0, 0, 0)),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    color: Colors.black12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -309,11 +313,9 @@ class _HomePageState extends State<HomePage> {
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              // Setiap tombol dipencet, tambahkan counter
                               buttonPressCount++;
                             });
-                            print(
-                                "Tombol telah dipencet sebanyak $buttonPressCount kali");
+                            print("Tombol telah dipencet sebanyak $buttonPressCount kali");
                           },
                           child: Text('Learn More'),
                         ),
