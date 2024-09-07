@@ -79,18 +79,25 @@ class _HomePageState extends State<HomePage> {
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () {
-                  print('Sign in pressed');
+                  setState(() {
+                    print('Sign in pressed');
+                  });
                 },
                 child: AnimatedScale(
-                  scale: isAnimating
-                      ? 0.9
-                      : 1.0, // Skala berubah ketika animasi aktif
-                  duration: Duration(milliseconds: 100), // Durasi animasi
+                  scale: isAnimating ? 1.2 : 1.0,
+                  duration: Duration(milliseconds: 200),
                   child: Text(
                     'Sign in',
-                    style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
+                  onEnd: () {
+                    setState(() {
+                      isAnimating = false;
+                    });
+                  },
                 ),
               ),
             ),
@@ -209,7 +216,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
-              color: Colors.black12,
+              color: Colors.grey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -230,6 +237,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 13,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   // Button "Learn More"
@@ -244,25 +252,28 @@ class _HomePageState extends State<HomePage> {
                         print(
                             "Tombol telah dipencet sebanyak $buttonPressCount kali");
                       },
-                      child: Text('Learn More',
-                          style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14)),
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.black54, // Ubah warna shadow tombol
+                        elevation: 5, // Ubah elevasi tombol
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12), // Ubah padding tombol
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // Ubah bentuk tombol menjadi lebih bulat
+                        ),
+                      ),
+                      child: Text(
+                        'Learn More',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'This is just a demo',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
