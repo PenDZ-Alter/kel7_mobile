@@ -62,8 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
       home: const HomePage(title: "HAMILTON"),
       
-      home: const LoginPage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
