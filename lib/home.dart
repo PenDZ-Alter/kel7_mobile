@@ -16,56 +16,11 @@ class _HomePageState extends State<HomePage> {
     {"image": "assets/Images/Hamilton.jpg", "title": "Tile 1"},
     {"image": "assets/Images/Hamilton.jpg", "title": "Tile 2"},
     {"image": "assets/Images/Hamilton.jpg", "title": "Tile 3"},
-    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 4"},
-    {"image": "assets/Images/Hamilton_logo.png"},
+    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 4"}
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Stack(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  Icon(Icons.list),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                widget.title,
-                style: const TextStyle(fontFamily: 'Times New Roman'),
-              ),
-            ),
-            Align(alignment: Alignment.centerRight, child: Text('Sign in')),
-          ],
-        title: Stack(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  Icon(Icons.list),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                widget.title,
-                style: const TextStyle(fontFamily: 'Times New Roman'),
-              ),
-            ),
-            Align(alignment: Alignment.centerRight, child: Text('Sign in')),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 218, 179, 6),
-      ),
-      body: Column(
     AppBar AppbarContent = AppBar(
         title: Stack(
           children: [
