@@ -10,14 +10,103 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double tileWidth = 300.0;
-  double tileHeight = 200.0;
+  double tileHeight = 300.0;
+
+  // Variabel counter untuk menghitung jumlah klik tombol
+  int buttonPressCount = 0;
+
+  // Variabel untuk skala animasi
+  double buttonScale = 1.0;
+  bool isAnimating = false;
+
+  // Variabel untuk menyimpan indeks ikon yang dipilih
+  int selectedIconIndex = -1;
 
   List<Map<String, dynamic>> tilesData = [
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 1" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 2" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 3" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 4" }
+    {
+      "image": "assets/Images/City3.jpg",
+      "title": "Seorang wanita melihat pemandangan kota sore hari"
+    },
+    {
+      "image": "assets/Images/City.jpg",
+      "title": "Pemandangan kota Lyon pada pagi hari"
+    },
+    {
+      "image": "assets/Images/City1.jpg",
+      "title": "Pemandangan kota Chicago pada sore hari"
+    },
+    {
+      "image": "assets/Images/City2.jpg",
+      "title": "Pemandangan kota Shanghai pada sore hari"
+    }
   ];
+
+  void _onButtonPressed() {
+    setState(() {
+      // Tambahkan skala tombol untuk animasi
+      isAnimating = true;
+      buttonScale = 0.9;
+      buttonPressCount++;
+      print("Tombol telah dipencet sebanyak $buttonPressCount kali");
+    });
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        buttonScale = 1.0;
+        isAnimating = false;
+      });
+    });
+  }
+
+  // Fungsi buildCircularIcon
+  Widget buildCircularIcon(
+      IconData icon, String label, int index, VoidCallback onTap) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          selectedIconIndex = index; // Simpan indeks ikon yang diklik
+        });
+        onTap();
+        // Kembalikan warna setelah 1 detik
+        Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            selectedIconIndex = -1; // Reset warna ikon kembali ke semula
+          });
+        });
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(1),
+                  spreadRadius: 2,
+                  blurRadius: 3,
+                  offset: Offset(2, 3),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              size: 25,
+              color: selectedIconIndex == index
+                  ? Colors.blue
+                  : Colors.black, // Ubah warna berdasarkan pemilihan
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,111 +129,71 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Align(
-              alignment: Alignment.centerRight, 
-              child: Text('Sign in',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    print('Sign in pressed');
+                  });
+                },
+                child: AnimatedScale(
+                  scale: isAnimating ? 1.2 : 1.0,
+                  duration: Duration(milliseconds: 300),
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.end,
+                  ),
+                  onEnd: () {
+                    setState(() {
+                      isAnimating = false;
+                    });
+                  },
                 ),
-              )
+              ),
             ),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 218, 179, 6));
 
-    /* Edit content here */
     Container content = Container(
       child: Column(
         children: <Widget>[
-          // Row for the icons with text labels (Lottery, Treasury, etc.)
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Lottery
-                InkWell(
-                  onTap:() {
-                    print("Lottery Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.bookmark),
-                      SizedBox(height: 8),
-                      Text('Lottery'),
-                    ],
-                  ),
-                ),
-
-                // Treasury
-                InkWell(
-                  onTap: () {
-                    print("Treasury Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.star),
-                      SizedBox(height: 8),
-                      Text('Treasury'),
-                    ],
-                  ),
-                ),
-
-                // Trivia
-                InkWell(
-                  onTap:() {
-                    print("Trivia Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.help),
-                      SizedBox(height: 8),
-                      Text('Trivia'),
-                    ],
-                  ),
-                ),
-
-                // Karaoke
-                InkWell(
-                  onTap: () {
-                    print("Karaoke Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.mic),
-                      SizedBox(height: 8),
-                      Text('Karaoke'),
-                    ],
-                  ),
-                ),
-
-                // Hamcam
-                InkWell(
-                  onTap:() {
-                    print("Hamcam Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.camera_alt),
-                      SizedBox(height: 8),
-                      Text('#hamcam'),
-                    ],
-                  ),
-                ),
+                buildCircularIcon(Icons.bookmark, 'Lottery', 0, () {
+                  print("Lottery Tapped");
+                }),
+                buildCircularIcon(Icons.star, 'Treasury', 1, () {
+                  print("Treasury Tapped");
+                }),
+                buildCircularIcon(Icons.help, 'Trivia', 2, () {
+                  print("Trivia Tapped");
+                }),
+                buildCircularIcon(Icons.mic, 'Karaoke', 3, () {
+                  print("Karaoke Tapped");
+                }),
+                buildCircularIcon(Icons.camera_alt, '#hamcam', 4, () {
+                  print("Hamcam Tapped");
+                }),
               ],
             ),
           ),
-          
-          // Image tiles scrollable horizontal axis
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
-              height: 350.0, // Adjust the height as needed
+              height: 350.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: tilesData.length,
                 itemBuilder: (context, i) {
-                  // Tile Container
                   return Container(
                     width: tileWidth,
                     margin: EdgeInsets.only(right: 8.0),
@@ -152,14 +201,23 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image.asset(
                           tilesData[i]['image'],
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           height: tileHeight,
                         ),
                         SizedBox(height: 8),
-                        Text(tilesData[i]['title'])
+                        Text(
+                          tilesData[i]['title'],
+                          style: TextStyle(
+                            fontFamily: 'Times New Roman',
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
                       ],
                     ),
-                    color: Colors.blue,
+                    color: Colors.blueGrey,
                   );
                 },
               ),
@@ -170,7 +228,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
-              color: Colors.black12,
+              color: Colors.grey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -179,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'Mobile Programming Online',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -189,18 +247,42 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'The UIN Malang Informatic Engineering subject you can do from home!',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  // Button
+                  // Button "Learn More"
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        // Your logic here
+                        setState(() {
+                          // Setiap tombol dipencet, tambahkan counter
+                          buttonPressCount++;
+                        });
+                        print(
+                            "Tombol telah dipencet sebanyak $buttonPressCount kali");
                       },
-                      child: Text('Learn More'),
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.black54, // Ubah warna shadow tombol
+                        elevation: 5, // Ubah elevasi tombol
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12), // Ubah padding tombol
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // Ubah bentuk tombol menjadi lebih bulat
+                        ),
+                      ),
+                      child: Text(
+                        'Learn More',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
                 ],

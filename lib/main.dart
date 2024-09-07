@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hamilton Demo',
+      title: 'Hamilton App',
       theme: ThemeData(
         useMaterial3: true,
       ),
