@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        
+          
           // Image tiles scrollable horizontal axis
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
+
           // Eduham Online tile
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
+
           // The rest of your content
           Padding(
             padding: EdgeInsets.all(16.0),
