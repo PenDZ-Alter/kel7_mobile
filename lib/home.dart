@@ -9,6 +9,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  double tileWidth = 300.0;
+  double tileHeight = 200.0;
+
+  List<Map<String, dynamic>> tilesData = [
+    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 1" },
+    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 2" },
+    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 3" },
+    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 4" }
+  ];
+
   @override
   Widget build(BuildContext context) {
     AppBar AppbarContent = AppBar(
@@ -53,44 +63,73 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Lottery
-                Column(
-                  children: [
-                    Icon(Icons.bookmark),
-                    SizedBox(height: 8),
-                    Text('Lottery'),
-                  ],
+                InkWell(
+                  onTap:() {
+                    print("Lottery Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.bookmark),
+                      SizedBox(height: 8),
+                      Text('Lottery'),
+                    ],
+                  ),
                 ),
+
                 // Treasury
-                Column(
-                  children: [
-                    Icon(Icons.star),
-                    SizedBox(height: 8),
-                    Text('Treasury'),
-                  ],
+                InkWell(
+                  onTap: () {
+                    print("Treasury Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.star),
+                      SizedBox(height: 8),
+                      Text('Treasury'),
+                    ],
+                  ),
                 ),
+
                 // Trivia
-                Column(
-                  children: [
-                    Icon(Icons.help),
-                    SizedBox(height: 8),
-                    Text('Trivia'),
-                  ],
+                InkWell(
+                  onTap:() {
+                    print("Trivia Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.help),
+                      SizedBox(height: 8),
+                      Text('Trivia'),
+                    ],
+                  ),
                 ),
+
                 // Karaoke
-                Column(
-                  children: [
-                    Icon(Icons.mic),
-                    SizedBox(height: 8),
-                    Text('Karaoke'),
-                  ],
+                InkWell(
+                  onTap: () {
+                    print("Karaoke Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.mic),
+                      SizedBox(height: 8),
+                      Text('Karaoke'),
+                    ],
+                  ),
                 ),
+
                 // Hamcam
-                Column(
-                  children: [
-                    Icon(Icons.camera_alt),
-                    SizedBox(height: 8),
-                    Text('#hamcam'),
-                  ],
+                InkWell(
+                  onTap:() {
+                    print("Hamcam Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.camera_alt),
+                      SizedBox(height: 8),
+                      Text('#hamcam'),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -101,81 +140,28 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
               height: 350.0, // Adjust the height as needed
-              child: ListView(
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                children: [
-                  // Tile 1
-                  Container(
-                    width: 300.0,
+                itemCount: tilesData.length,
+                itemBuilder: (context, i) {
+                  // Tile Container
+                  return Container(
+                    width: tileWidth,
                     margin: EdgeInsets.only(right: 8.0),
                     child: Column(
                       children: [
                         Image.asset(
-                          'assets/Images/Hamilton.jpg',
+                          tilesData[i]['image'],
                           fit: BoxFit.contain,
-                          height: 200,
+                          height: tileHeight,
                         ),
                         SizedBox(height: 8),
-                        Text("Tile 1")
+                        Text(tilesData[i]['title'])
                       ],
                     ),
                     color: Colors.blue,
-                  ),
-              
-                  // Tile 2
-                  Container(
-                    width: 200.0,
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/Images/Hamilton.jpg',
-                          fit: BoxFit.contain,
-                          height: 200,
-                        ),
-                        SizedBox(height: 8),
-                        Text("Tile 1")
-                      ],
-                    ),
-                    color: Colors.blue,
-                  ),
-              
-                  // Tile 3
-                  Container(
-                    width: 200.0,
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/Images/Hamilton.jpg',
-                          fit: BoxFit.contain,
-                          height: 200,
-                        ),
-                        SizedBox(height: 8),
-                        Text("Tile 1")
-                      ],
-                    ),
-                    color: Colors.blue
-                  ),
-
-                  // Tile 4
-                  Container(
-                    width: 200.0,
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/Images/Hamilton.jpg',
-                          fit: BoxFit.contain,
-                          height: 200,
-                        ),
-                        SizedBox(height: 8),
-                        Text("Tile 1")
-                      ],
-                    ),
-                    color: Colors.blue
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
@@ -237,7 +223,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-
 
     return Scaffold(
       appBar: AppbarContent,
