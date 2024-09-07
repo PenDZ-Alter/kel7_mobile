@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tugas1_ui/home.dart';
+import 'package:tugas1_ui/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,6 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
       home: const HomePage(title: "HAMILTON"),
       
+      home: const LoginPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

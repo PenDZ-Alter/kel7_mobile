@@ -13,10 +13,11 @@ class _HomePageState extends State<HomePage> {
   double tileHeight = 200.0;
 
   List<Map<String, dynamic>> tilesData = [
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 1" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 2" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 3" },
-    { "image": "assets/Images/Hamilton.jpg", "title": "Tile 4" }
+    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 1"},
+    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 2"},
+    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 3"},
+    {"image": "assets/Images/Hamilton.jpg", "title": "Tile 4"},
+    {"image": "assets/Images/Hamilton_logo.png"},
   ];
 
   @override
@@ -84,14 +85,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Align(
-              alignment: Alignment.centerRight, 
-              child: Text('Sign in',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400
-                ),
-              )
-            ),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Sign in',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+                )),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 218, 179, 6));
@@ -108,7 +106,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 // Lottery
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Lottery Tapped");
                   },
                   child: Column(
@@ -136,7 +134,7 @@ class _HomePageState extends State<HomePage> {
 
                 // Trivia
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Trivia Tapped");
                   },
                   child: Column(
@@ -164,7 +162,7 @@ class _HomePageState extends State<HomePage> {
 
                 // Hamcam
                 InkWell(
-                  onTap:() {
+                  onTap: () {
                     print("Hamcam Tapped");
                   },
                   child: Column(
@@ -178,7 +176,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        
+
           // Image tiles scrollable horizontal axis
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -209,7 +207,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
+
           // Eduham Online tile
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -251,7 +249,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        
+
           // The rest of your content
           Padding(
             padding: EdgeInsets.all(16.0),

@@ -86,6 +86,7 @@ flutter:
   #         weight: 700
   assets:
     - assets/Images/Hamilton.jpg
+    - assets/Images/hamilton_logo2.png
 
   fonts:
     - family: Times New Roman
