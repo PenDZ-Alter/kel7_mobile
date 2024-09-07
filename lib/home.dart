@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double tileWidth = 300.0;
   double tileHeight = 300.0;
+  double tileContainerHeight = 450.0;
 
   // Variabel counter untuk menghitung jumlah klik tombol
   int buttonPressCount = 0;
@@ -167,25 +168,69 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                buildCircularIcon(Icons.bookmark, 'Lottery', 0, () {
-                  print("Lottery Tapped");
-                }),
-                buildCircularIcon(Icons.star, 'Treasury', 1, () {
-                  print("Treasury Tapped");
-                }),
-                buildCircularIcon(Icons.help, 'Trivia', 2, () {
-                  print("Trivia Tapped");
-                }),
-                buildCircularIcon(Icons.mic, 'Karaoke', 3, () {
-                  print("Karaoke Tapped");
-                }),
-                buildCircularIcon(Icons.camera_alt, '#hamcam', 4, () {
-                  print("Hamcam Tapped");
-                }),
+                InkWell(
+                  onTap: () {
+                    print("Lottery Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.bookmark),
+                      SizedBox(height: 8),
+                      Text('Lottery'),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    print("Treasury Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.star),
+                      SizedBox(height: 8),
+                      Text('Treasury'),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    print("Trivia Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.help),
+                      SizedBox(height: 8),
+                      Text('Trivia'),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    print("Karaoke Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.mic),
+                      SizedBox(height: 8),
+                      Text('Karaoke'),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    print("Hamcam Tapped");
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.camera_alt),
+                      SizedBox(height: 8),
+                      Text('#hamcam'),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
@@ -205,30 +250,19 @@ class _HomePageState extends State<HomePage> {
                           height: tileHeight,
                         ),
                         SizedBox(height: 8),
-                        Text(
-                          tilesData[i]['title'],
-                          style: TextStyle(
-                            fontFamily: 'Times New Roman',
-                            fontSize: 13,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
+                        Text(tilesData[i]['title'])
                       ],
                     ),
-                    color: Colors.blueGrey,
+                    color: Colors.blue,
                   );
                 },
               ),
             ),
           ),
-
-          // Eduham Online tile
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
-              color: Colors.grey,
+              color: Colors.black12,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -237,7 +271,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'Mobile Programming Online',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -247,9 +281,8 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'The UIN Malang Informatic Engineering subject you can do from home!',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                   // Button "Learn More"
@@ -264,33 +297,13 @@ class _HomePageState extends State<HomePage> {
                         print(
                             "Tombol telah dipencet sebanyak $buttonPressCount kali");
                       },
-                      style: ElevatedButton.styleFrom(
-                        shadowColor: Colors.black54, // Ubah warna shadow tombol
-                        elevation: 5, // Ubah elevasi tombol
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12), // Ubah padding tombol
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              12), // Ubah bentuk tombol menjadi lebih bulat
-                        ),
-                      ),
-                      child: Text(
-                        'Learn More',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
+                      child: Text('Learn More'),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-
-          // The rest of your content
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
