@@ -19,6 +19,9 @@ class _HomePageState extends State<HomePage> {
   double buttonScale = 1.0;
   bool isAnimating = false;
 
+  // Variabel untuk menyimpan indeks ikon yang dipilih
+  int selectedIconIndex = -1;
+
   List<Map<String, dynamic>> tilesData = [
     {
       "image": "assets/Images/City3.jpg",
@@ -55,6 +58,56 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Fungsi buildCircularIcon
+  Widget buildCircularIcon(
+      IconData icon, String label, int index, VoidCallback onTap) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          selectedIconIndex = index; // Simpan indeks ikon yang diklik
+        });
+        onTap();
+        // Kembalikan warna setelah 1 detik
+        Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            selectedIconIndex = -1; // Reset warna ikon kembali ke semula
+          });
+        });
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(1),
+                  spreadRadius: 2,
+                  blurRadius: 3,
+                  offset: Offset(2, 3),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              size: 25,
+              color: selectedIconIndex == index
+                  ? Colors.blue
+                  : Colors.black, // Ubah warna berdasarkan pemilihan
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     AppBar AppbarContent = AppBar(
@@ -85,13 +138,14 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: AnimatedScale(
                   scale: isAnimating ? 1.2 : 1.0,
-                  duration: Duration(milliseconds: 200),
+                  duration: Duration(milliseconds: 300),
                   child: Text(
                     'Sign in',
                     style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w400,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
                     ),
+                    textAlign: TextAlign.end,
                   ),
                   onEnd: () {
                     setState(() {
@@ -113,69 +167,25 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                InkWell(
-                  onTap: () {
-                    print("Lottery Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.bookmark),
-                      SizedBox(height: 8),
-                      Text('Lottery'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Treasury Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.star),
-                      SizedBox(height: 8),
-                      Text('Treasury'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Trivia Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.help),
-                      SizedBox(height: 8),
-                      Text('Trivia'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Karaoke Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.mic),
-                      SizedBox(height: 8),
-                      Text('Karaoke'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Hamcam Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.camera_alt),
-                      SizedBox(height: 8),
-                      Text('#hamcam'),
-                    ],
-                  ),
-                ),
+                buildCircularIcon(Icons.bookmark, 'Lottery', 0, () {
+                  print("Lottery Tapped");
+                }),
+                buildCircularIcon(Icons.star, 'Treasury', 1, () {
+                  print("Treasury Tapped");
+                }),
+                buildCircularIcon(Icons.help, 'Trivia', 2, () {
+                  print("Trivia Tapped");
+                }),
+                buildCircularIcon(Icons.mic, 'Karaoke', 3, () {
+                  print("Karaoke Tapped");
+                }),
+                buildCircularIcon(Icons.camera_alt, '#hamcam', 4, () {
+                  print("Hamcam Tapped");
+                }),
               ],
             ),
           ),
+          // Konten lainnya dimasukkan kembali di sini
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
