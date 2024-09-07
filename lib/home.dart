@@ -42,26 +42,8 @@ class _HomePageState extends State<HomePage> {
     }
   ];
 
-  void _onButtonPressed() {
-    setState(() {
-      // Tambahkan skala tombol untuk animasi
-      isAnimating = true;
-      buttonScale = 0.9;
-      buttonPressCount++;
-      print("Tombol telah dipencet sebanyak $buttonPressCount kali");
-    });
-
-    Future.delayed(Duration(milliseconds: 100), () {
-      setState(() {
-        buttonScale = 1.0;
-        isAnimating = false;
-      });
-    });
-  }
-
   // Fungsi buildCircularIcon
-  Widget buildCircularIcon(
-      IconData icon, String label, int index, VoidCallback onTap) {
+  Widget buildCircularIcon(IconData icon, String label, int index, VoidCallback onTap) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -172,70 +154,25 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        print("Lottery Tapped");
-                      },
-                      child: Column(
-                        children: [
-                          Icon(Icons.bookmark),
-                          SizedBox(height: 8),
-                          Text('Lottery'),
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print("Treasury Tapped");
-                      },
-                      child: Column(
-                        children: [
-                          Icon(Icons.star),
-                          SizedBox(height: 8),
-                          Text('Treasury'),
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print("Trivia Tapped");
-                      },
-                      child: Column(
-                        children: [
-                          Icon(Icons.help),
-                          SizedBox(height: 8),
-                          Text('Trivia'),
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print("Karaoke Tapped");
-                      },
-                      child: Column(
-                        children: [
-                          Icon(Icons.mic),
-                          SizedBox(height: 8),
-                          Text('Karaoke'),
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print("Hamcam Tapped");
-                      },
-                      child: Column(
-                        children: [
-                          Icon(Icons.camera_alt),
-                          SizedBox(height: 8),
-                          Text('#hamcam'),
-                        ],
-                      ),
-                    ),
+                    buildCircularIcon(Icons.bookmark, 'Lottery', 0, () {
+                      print("Lottery Tapped");
+                    }),
+                    buildCircularIcon(Icons.star, 'Treasury', 1, () {
+                      print("Treasury Tapped");
+                    }),
+                    buildCircularIcon(Icons.help, 'Trivia', 2, () {
+                      print("Trivia Tapped");
+                    }),
+                    buildCircularIcon(Icons.mic, 'Karaoke', 3, () {
+                      print("Karaoke Tapped");
+                    }),
+                    buildCircularIcon(Icons.camera_alt, '#hamcam', 4, () {
+                      print("Hamcam Tapped");
+                    }),
                   ],
                 ),
               ),
-              
+
               // Image Tiles, Scrollable horizontal axis
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -313,12 +250,31 @@ class _HomePageState extends State<HomePage> {
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() {
+                              // Setiap tombol dipencet, tambahkan counter
                               buttonPressCount++;
                             });
                             print("Tombol telah dipencet sebanyak $buttonPressCount kali");
                           },
-                          child: Text('Learn More'),
-                        ),
+                          style: ElevatedButton.styleFrom(
+                            shadowColor: Colors.black54, // Ubah warna shadow tombol
+                            elevation: 5, // Ubah elevasi tombol
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12), // Ubah padding tombol
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  12), // Ubah bentuk tombol menjadi lebih bulat
+                            ),
+                          ),
+                          child: Text(
+                            'Learn More',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          )
+                        )
                       ),
                     ],
                   ),
