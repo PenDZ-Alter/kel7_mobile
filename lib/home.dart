@@ -161,161 +161,183 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(255, 218, 179, 6));
 
     Container content = Container(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InkWell(
-                  onTap: () {
-                    print("Lottery Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.bookmark),
-                      SizedBox(height: 8),
-                      Text('Lottery'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Treasury Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.star),
-                      SizedBox(height: 8),
-                      Text('Treasury'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Trivia Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.help),
-                      SizedBox(height: 8),
-                      Text('Trivia'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Karaoke Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.mic),
-                      SizedBox(height: 8),
-                      Text('Karaoke'),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    print("Hamcam Tapped");
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.camera_alt),
-                      SizedBox(height: 8),
-                      Text('#hamcam'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Container(
-              height: 350.0,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: tilesData.length,
-                itemBuilder: (context, i) {
-                  return Container(
-                    width: tileWidth,
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          tilesData[i]['image'],
-                          fit: BoxFit.cover,
-                          height: tileHeight,
-                        ),
-                        SizedBox(height: 8),
-                        Text(tilesData[i]['title'])
-                      ],
-                    ),
-                    color: Colors.blue,
-                  );
-                },
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Container(
-              color: Colors.black12,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Mobile Programming Online',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'The UIN Malang Informatic Engineering subject you can do from home!',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  // Button "Learn More"
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          // Setiap tombol dipencet, tambahkan counter
-                          buttonPressCount++;
-                        });
-                        print(
-                            "Tombol telah dipencet sebanyak $buttonPressCount kali");
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          Column(
+            children: <Widget>[
+              // Topbar
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        print("Lottery Tapped");
                       },
-                      child: Text('Learn More'),
+                      child: Column(
+                        children: [
+                          Icon(Icons.bookmark),
+                          SizedBox(height: 8),
+                          Text('Lottery'),
+                        ],
+                      ),
                     ),
+                    InkWell(
+                      onTap: () {
+                        print("Treasury Tapped");
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.star),
+                          SizedBox(height: 8),
+                          Text('Treasury'),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        print("Trivia Tapped");
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.help),
+                          SizedBox(height: 8),
+                          Text('Trivia'),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        print("Karaoke Tapped");
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.mic),
+                          SizedBox(height: 8),
+                          Text('Karaoke'),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        print("Hamcam Tapped");
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.camera_alt),
+                          SizedBox(height: 8),
+                          Text('#hamcam'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Image Tiles, Scrollable horizontal axis
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  height: tileContainerHeight,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: tilesData.length,
+                    itemBuilder: (context, i) {
+                      return Container(
+                        width: tileWidth,
+                        margin: EdgeInsets.only(right: 12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(width: 6.0, color: Color.fromARGB(0, 0, 0, 0)),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0))
+                        ),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0)
+                              ),
+                              child: Image.asset(
+                                tilesData[i]['image'],
+                                fit: BoxFit.cover,
+                                height: tileHeight,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(tilesData[i]['title'])
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'This is just a demo',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
+          
+              // Content 3
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  color: Colors.black12,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Mobile Programming Online',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'The UIN Malang Informatic Engineering subject you can do from home!',
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      // Button "Learn More"
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              // Setiap tombol dipencet, tambahkan counter
+                              buttonPressCount++;
+                            });
+                            print(
+                                "Tombol telah dipencet sebanyak $buttonPressCount kali");
+                          },
+                          child: Text('Learn More'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              
+              // Content 4
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'This is just a demo',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ]
       ),
     );
 
