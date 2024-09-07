@@ -86,7 +86,6 @@ flutter:
   #         weight: 700
   assets:
     - assets/Images/Hamilton.jpg
-    - assets/Images/qq.png
     - assets/Images/City.jpg
     - assets/Images/City1.jpg
     - assets/Images/City2.jpg
