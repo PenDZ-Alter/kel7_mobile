@@ -12,15 +12,48 @@ class _HomePageState extends State<HomePage> {
   double tileWidth = 300.0;
   double tileHeight = 300.0;
 
-  // Tambahkan variabel counter untuk menghitung jumlah klik tombol
+  // Variabel counter untuk menghitung jumlah klik tombol
   int buttonPressCount = 0;
 
+  // Variabel untuk skala animasi
+  double buttonScale = 1.0;
+  bool isAnimating = false;
+
   List<Map<String, dynamic>> tilesData = [
-    {"image": "assets/Images/City3.jpg", "title": "City1"},
-    {"image": "assets/Images/City.jpg", "title": "City2"},
-    {"image": "assets/Images/City1.jpg", "title": "City3"},
-    {"image": "assets/Images/City2.jpg", "title": "City4"}
+    {
+      "image": "assets/Images/City3.jpg",
+      "title": "Seorang wanita melihat pemandangan kota sore hari"
+    },
+    {
+      "image": "assets/Images/City.jpg",
+      "title": "Pemandangan kota Lyon pada pagi hari"
+    },
+    {
+      "image": "assets/Images/City1.jpg",
+      "title": "Pemandangan kota Chicago pada sore hari"
+    },
+    {
+      "image": "assets/Images/City2.jpg",
+      "title": "Pemandangan kota Shanghai pada sore hari"
+    }
   ];
+
+  void _onButtonPressed() {
+    setState(() {
+      // Tambahkan skala tombol untuk animasi
+      isAnimating = true;
+      buttonScale = 0.9;
+      buttonPressCount++;
+      print("Tombol telah dipencet sebanyak $buttonPressCount kali");
+    });
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        buttonScale = 1.0;
+        isAnimating = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +76,24 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'Sign in',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
-                )),
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  print('Sign in pressed');
+                },
+                child: AnimatedScale(
+                  scale: isAnimating
+                      ? 0.9
+                      : 1.0, // Skala berubah ketika animasi aktif
+                  duration: Duration(milliseconds: 100), // Durasi animasi
+                  child: Text(
+                    'Sign in',
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 218, 179, 6));
@@ -142,10 +188,19 @@ class _HomePageState extends State<HomePage> {
                           height: tileHeight,
                         ),
                         SizedBox(height: 8),
-                        Text(tilesData[i]['title'])
+                        Text(
+                          tilesData[i]['title'],
+                          style: TextStyle(
+                            fontFamily: 'Times New Roman',
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
                       ],
                     ),
-                    color: Colors.blue,
+                    color: Colors.blueGrey,
                   );
                 },
               ),
@@ -163,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'Mobile Programming Online',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -173,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       'The UIN Malang Informatic Engineering subject you can do from home!',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                       ),
                     ),
                   ),
@@ -189,7 +244,11 @@ class _HomePageState extends State<HomePage> {
                         print(
                             "Tombol telah dipencet sebanyak $buttonPressCount kali");
                       },
-                      child: Text('Learn More'),
+                      child: Text('Learn More',
+                          style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14)),
                     ),
                   ),
                 ],
