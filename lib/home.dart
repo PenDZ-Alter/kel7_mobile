@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          // Konten lainnya dimasukkan kembali di sini
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
@@ -223,6 +223,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          // Eduham Online tile
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
@@ -284,6 +286,19 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          // The rest of your content
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'This is just a demo',
+              style: TextStyle(
+                fontFamily: 'Arial',
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

@@ -18,6 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.4+1
 
+
 environment:
   sdk: ^3.5.1
 
@@ -90,6 +91,7 @@ flutter:
     - assets/Images/City1.jpg
     - assets/Images/City2.jpg
     - assets/Images/City3.jpg
+    - assets/Images/hamilton_logo2.png
 
   fonts:
     - family: Times New Roman
