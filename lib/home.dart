@@ -10,8 +10,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   double tileWidth = 300.0;
   double tileHeight = 300.0;
   double tileContainerHeight = 450.0;
@@ -108,10 +106,14 @@ class _HomePageState extends State<HomePage> {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: GestureDetector(
-                child: Icon(Icons.list),
-                onTap: () {
-                  _scaffoldKey.currentState?.openDrawer();
+              child: Builder(
+                builder: (context) {
+                  return GestureDetector(
+                    child: Icon(Icons.list),
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    }
+                  );
                 }
               )
             ),
@@ -124,40 +126,37 @@ class _HomePageState extends State<HomePage> {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: Builder(
-                builder: (context) {
-                  return GestureDetector(
-                    onTap: () {
-                      // Navigasi ke halaman login
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: AnimatedScale(
-                      scale: isAnimating ? 1.2 : 1.0,
-                      duration: Duration(milliseconds: 300),
-                      child: Text(
-                        'Sign in',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
-                      onEnd: () {
-                        setState(() {
-                          isAnimating = false;
-                        });
-                      },
-                    ),
+              child: GestureDetector(
+                onTap: () {
+                  // Navigasi ke halaman login
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
-                }
-              ),
+                },
+                child: AnimatedScale(
+                  scale: isAnimating ? 1.2 : 1.0,
+                  duration: Duration(milliseconds: 300),
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.end,
+                  ),
+                  onEnd: () {
+                    setState(() {
+                      isAnimating = false;
+                    });
+                  },
+                ),
+              )
             ),
           ],
         ),
-        backgroundColor: const Color.fromARGB(255, 218, 179, 6));
+        backgroundColor: const Color.fromARGB(255, 218, 179, 6)
+      );
     
     // Drawer
     Drawer sideMenu = Drawer(
@@ -431,7 +430,6 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppbarContent,
       drawer: sideMenu,
       body: content,
