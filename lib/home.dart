@@ -48,8 +48,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   // Fungsi buildCircularIcon
-  Widget buildCircularIcon(
-      IconData icon, String label, int index, VoidCallback onTap) {
+  Widget buildCircularIcon(IconData icon, String label, int index, VoidCallback onTap) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -101,6 +100,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     AppBar AppbarContent = AppBar(
+      automaticallyImplyLeading: false,
       title: Stack(
         children: [
           Align(
@@ -117,15 +117,17 @@ class _HomePageState extends State<HomePage> {
               widget.title,
               style: const TextStyle(fontFamily: 'Times New Roman'),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  // Navigasi ke halaman login
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () {
+                // Navigasi ke halaman login
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
               child: AnimatedScale(
                 scale: isAnimating ? 1.2 : 1.0,
                 duration: Duration(milliseconds: 300),
