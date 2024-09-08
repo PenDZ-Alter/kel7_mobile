@@ -135,9 +135,11 @@ class _LoginPageState extends State<LoginPage> {
                 const Text(
                   "Haven't signed up yet?",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.amber, // Warna kuning
-                  ),
+                      fontSize: 16,
+                      color: Colors.amber, // Warna kuning
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline),
                 ),
                 TextButton(
                   onPressed: () {
