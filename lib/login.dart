@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas1_ui/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,14 +17,6 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent, // AppBar transparan
         elevation: 0, // Menghilangkan bayangan (shadow)
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.black), // Ikon panah kembali
-          onPressed: () {
-            // Aksi ketika ikon panah ditekan
-            Navigator.pop(context); // Contoh: kembali ke halaman sebelumnya
-          },
-        ),
         title: const Text(
           'LOG IN',
           style: TextStyle(
@@ -127,6 +120,104 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: const Text('Log in'),
                 ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Lupa password
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () {
+                  // Menampilkan pop-up dialog ketika tombol ditekan
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Center(
+                            child: Container(child: Text("Forgot Password"))),
+                        content: Text(
+                            "To reset your password, please contact support or use the reset password option."),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Menutup dialog
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Center(child: const Text('Forgot Password?')),
+              ),
+            ),
+
+            // Tombol login
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.amber, // Warna tombol login
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                // Navigasi kembali ke halaman home
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(title: "H A M I L T O N")),
+                );
+              },
+              child: const Text('Log in'),
+            ),
+            const SizedBox(height: 20),
+
+            // Belum punya akun
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Haven't signed up yet?",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.amber, // Warna kuning
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Menampilkan pop-up dialog ketika tombol ditekan
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Center(
+                              child:
+                                  Container(child: Text("Create an account"))),
+                          content: Text(
+                              "To make account, please contact support or use your current account."),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Menutup dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: const Text(
+                    'Create an account',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      decoration: TextDecoration.underline,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold, // Warna hitam
                 const SizedBox(height: 20),
           
                 // Belum punya akun

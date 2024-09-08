@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas1_ui/login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -116,15 +117,15 @@ class _HomePageState extends State<HomePage> {
               widget.title,
               style: const TextStyle(fontFamily: 'Times New Roman'),
             ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  print('Sign in pressed');
-                });
-              },
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  // Navigasi ke halaman login
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
               child: AnimatedScale(
                 scale: isAnimating ? 1.2 : 1.0,
                 duration: Duration(milliseconds: 300),
