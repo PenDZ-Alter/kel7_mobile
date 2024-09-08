@@ -105,6 +105,19 @@ class _HomePageState extends State<HomePage> {
         title: Stack(
           children: [
             Align(
+              alignment: Alignment.centerLeft,
+              child: Builder(
+                builder: (context) {
+                  return GestureDetector(
+                    child: Icon(Icons.list),
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    }
+                  );
+                }
+              )
+            ),
+            Align(
               alignment: Alignment.center,
               child: Text(
                 widget.title,
@@ -138,11 +151,14 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-              ),
+              )
             ),
           ],
         ),
-        backgroundColor: const Color.fromARGB(255, 218, 179, 6));
+        backgroundColor: const Color.fromARGB(255, 218, 179, 6)
+      );
+    
+    // Drawer
     Drawer sideMenu = Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
