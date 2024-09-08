@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas1_ui/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/images/hamilton_logo2.png', // Sesuaikan dengan lokasi file logo Anda
+                    'assets/Images/hamilton_logo2.png', // Sesuaikan dengan lokasi file logo Anda
                     height: 100,
                   ),
                   const SizedBox(height: 10),
@@ -122,7 +123,12 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               onPressed: () {
-                // Handle login
+                // Navigasi kembali ke halaman home
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(title: "H A M I L T O N")),
+                );
               },
               child: const Text('Log in'),
             ),

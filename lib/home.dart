@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas1_ui/login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -121,9 +122,11 @@ class _HomePageState extends State<HomePage> {
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () {
-                  setState(() {
-                    print('Sign in pressed');
-                  });
+                  // Navigasi ke halaman login
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
                 child: AnimatedScale(
                   scale: isAnimating ? 1.2 : 1.0,
