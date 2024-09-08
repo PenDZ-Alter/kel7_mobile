@@ -101,6 +101,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     AppBar AppbarContent = AppBar(
+        automaticallyImplyLeading: false,
         title: Stack(
           children: [
             Align(
