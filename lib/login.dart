@@ -13,20 +13,13 @@ class _LoginPageState extends State<LoginPage> {
   List<Map<String, dynamic>> tilesData = [
     {"image": "assets/Images/Hamilton_logo.jpg"},
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent, // AppBar transparan
         elevation: 0, // Menghilangkan bayangan (shadow)
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.black), // Ikon panah kembali
-          onPressed: () {
-            // Aksi ketika ikon panah ditekan
-            Navigator.pop(context); // Contoh: kembali ke halaman sebelumnya
-          },
-        ),
         title: const Text(
           'LOG IN',
           style: TextStyle(
@@ -107,9 +100,28 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () {
-                  // Handle lupa password
+                  // Menampilkan pop-up dialog ketika tombol ditekan
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Center(
+                            child: Container(child: Text("Forgot Password"))),
+                        content: Text(
+                            "To reset your password, please contact support or use the reset password option."),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Menutup dialog
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
-                child: const Text('Forgot Password?'),
+                child: Center(child: const Text('Forgot Password?')),
               ),
             ),
 
@@ -141,21 +153,42 @@ class _LoginPageState extends State<LoginPage> {
                 const Text(
                   "Haven't signed up yet?",
                   style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.amber, // Warna kuning
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline),
+                    fontSize: 16,
+                    color: Colors.amber, // Warna kuning
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Handle buat akun baru
+                    // Menampilkan pop-up dialog ketika tombol ditekan
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Center(
+                              child:
+                                  Container(child: Text("Create an account"))),
+                          content: Text(
+                              "To make account, please contact support or use your current account."),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Menutup dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: const Text(
                     'Create an account',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.black, // Warna hitam
+                      color: Colors.black,
+                      decoration: TextDecoration.underline,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold, // Warna hitam
                     ),
                   ),
                 ),
