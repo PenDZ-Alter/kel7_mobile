@@ -9,12 +9,18 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   String? _selectedStatus;
+  String? _selectedFakultas;
+  String? _selectedProdi;
+
   List<String> _statuses = [
     'Bekerja (full time/part time)',
     'Wiraswasta',
     'Melanjutkan pendidikan',
     'Tidak kerja tetapi sedang mencari kerja'
   ];
+
+  List<String> _opsiFakultas = [ "Saintek", "Manajemen" ];
+  List <String> _opsiProdi = [];
 
   @override
   Widget build(BuildContext context) {
@@ -109,11 +115,32 @@ class _FormPageState extends State<FormPage> {
           Row(
             children: [
               Expanded(
-                child: TextFormField(
+                child: DropdownButtonFormField(
                   decoration: const InputDecoration(
                     labelText: 'Fakultas',
                   ),
-                ),
+                  items: _opsiFakultas.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedFakultas = value;
+                      _selectedProdi = null;
+                      // Update daftar prodi berdasarkan fakultas yang dipilih
+                      if (value == 'Saintek') {
+                        _opsiProdi = ['Teknik Informatika', 'Teknik Arsitektur', 'Sistem Informasi'];
+                      } else if (value == 'Manajemen') {
+                        _opsiProdi = ['Manajemen'];
+                      } else {
+                        _opsiProdi = [];
+                      }
+                    });
+                  },
+                  value: _selectedFakultas,
+                ),  
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -121,15 +148,17 @@ class _FormPageState extends State<FormPage> {
                   decoration: const InputDecoration(
                     labelText: 'Prodi',
                   ),
-                  items: [ 'Teknik Informatika', 'Teknik Arsitektur', 'Sistem Informasi', 'Manajemen' ]
-                      .map((String value) {
+                  items: _opsiProdi.isNotEmpty ? 
+                      _opsiProdi.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
-                      }).toList(),
+                      }).toList() : [],
                   onChanged: (String? value) {
-                    setState(() {});
+                    setState(() {
+                      _selectedProdi = value;
+                    });
                   },
                 ),
               ),
