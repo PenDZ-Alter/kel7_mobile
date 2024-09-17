@@ -128,7 +128,7 @@ class _FormPageState extends State<FormPage> {
                   onChanged: (String? value) {
                     setState(() {
                       _selectedFakultas = value;
-                      _selectedProdi = null;
+
                       // Update daftar prodi berdasarkan fakultas yang dipilih
                       if (value == 'Saintek') {
                         _opsiProdi = ['Teknik Informatika', 'Teknik Arsitektur', 'Sistem Informasi'];
@@ -137,10 +137,13 @@ class _FormPageState extends State<FormPage> {
                       } else {
                         _opsiProdi = [];
                       }
+
+                      // Reset Prodi when Fakultas is changed
+                      _selectedProdi = null;
                     });
                   },
                   value: _selectedFakultas,
-                ),  
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -148,18 +151,20 @@ class _FormPageState extends State<FormPage> {
                   decoration: const InputDecoration(
                     labelText: 'Prodi',
                   ),
-                  items: _opsiProdi.isNotEmpty ? 
-                      _opsiProdi.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList() : [],
+                  items: _opsiProdi.isNotEmpty
+                      ? _opsiProdi.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList()
+                      : [],
                   onChanged: (String? value) {
                     setState(() {
                       _selectedProdi = value;
                     });
                   },
+                  value: _selectedProdi,  // Add this to properly reflect the selected value
                 ),
               ),
             ],
