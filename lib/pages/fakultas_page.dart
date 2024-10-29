@@ -31,7 +31,8 @@ class _FakultasPageState extends State<FakultasPage> {
       _loading = true;
     });
 
-    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
+    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
+        dotenv.env['PASS'] ?? "");
     final newData = await odoo.getData(
       model: 'annas.fakultas',
       fields: ["name"],
@@ -50,14 +51,12 @@ class _FakultasPageState extends State<FakultasPage> {
     });
   }
 
-  // Function to open modal form
   void _openAddFakultasModal() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return FakultasFormModal(
           onSubmit: (newFakultas) async {
-            // Call to create new fakultas in Odoo
             final response = await odoo.createRecord(
               model: 'annas.fakultas',
               data: newFakultas,
@@ -78,26 +77,49 @@ class _FakultasPageState extends State<FakultasPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Fakultas Data"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _openAddFakultasModal,
-          ),
-        ],
+        backgroundColor: Colors.orangeAccent, // Warna oranye untuk konsistensi
+        centerTitle: true,
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _fakultasData.length + (_allFetched ? 0 : 1),
-        itemBuilder: (context, index) {
-          if (index == _fakultasData.length) {
-            return null;
-          }
-          final fakultas = _fakultasData[index];
-          return ListTile(
-            title: Text(fakultas["name"] ?? "N/A")
-          );
-        },
+      body: Container(
+        color:
+            const Color(0xFFE0F7FA), // Warna biru aqua sebagai latar belakang
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView.builder(
+                  itemCount: _fakultasData.length + (_allFetched ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (index == _fakultasData.length) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final fakultas = _fakultasData[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.orange.withOpacity(0.3),
+                      child: ListTile(
+                        title: Text(
+                          fakultas["name"] ?? "N/A",
+                          style: const TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.all(16),
+                      ),
+                    );
+                  },
+                ),
+              ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddFakultasModal,
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.orangeAccent,
       ),
     );
   }
@@ -122,11 +144,9 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
   }
 
   void _submit() {
-    final newFakultas = {
-      "name": _nameController.text
-    };
+    final newFakultas = {"name": _nameController.text};
     widget.onSubmit(newFakultas);
-    Navigator.of(context).pop(); // Close modal
+    Navigator.of(context).pop();
   }
 
   @override
@@ -138,13 +158,22 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
         children: [
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Fakultas Name'),
+            decoration: const InputDecoration(
+              labelText: 'Fakultas Name',
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.orangeAccent),
+              ),
+            ),
           )
         ],
       ),
       actions: [
         ElevatedButton(
           onPressed: _submit,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orangeAccent,
+          ),
           child: const Text("Submit"),
         ),
       ],

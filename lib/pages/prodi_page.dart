@@ -22,8 +22,13 @@ class _ProdiPageState extends State<ProdiPage> {
   }
 
   Future<void> _fetchProdiData() async {
-    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
-    _prodiData = await odoo.getData(model: 'annas.prodi', fields: ["name", "description", "fakultas_id", "kaprodi"], limit: 15);
+    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
+        dotenv.env['PASS'] ?? "");
+    _prodiData = await odoo.getData(
+      model: 'annas.prodi',
+      fields: ["name", "description", "fakultas_id", "kaprodi"],
+      limit: 15,
+    );
     setState(() {
       _loading = false;
     });
@@ -32,23 +37,47 @@ class _ProdiPageState extends State<ProdiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Prodi Data")),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _prodiData.length,
-              itemBuilder: (context, index) {
-                final prodi = _prodiData[index];
-                return ListTile(
-                  title: Text(prodi["name"] ?? "N/A"),
-                  subtitle: Text("Fakultas: ${prodi["fakultas_id"][1]}"),
-                  trailing: SizedBox(
-                    width: 100,
-                    child: Text("Kaprodi: ${prodi["kaprodi"]}")
-                  ),
-                );
-              },
-            ),
+      appBar: AppBar(
+        title: const Text("Prodi Data"),
+        backgroundColor: Colors.orangeAccent,
+        centerTitle: true,
+      ),
+      body: Container(
+        color: const Color(0xFFE0F7FA), // Aqua blue background
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView.builder(
+                  itemCount: _prodiData.length,
+                  itemBuilder: (context, index) {
+                    final prodi = _prodiData[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.orange.withOpacity(0.3),
+                      child: ListTile(
+                        title: Text(
+                          prodi["name"] ?? "N/A",
+                          style: const TextStyle(
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Fakultas: ${prodi["fakultas_id"][1]}\nKaprodi: ${prodi["kaprodi"]}",
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                        contentPadding: const EdgeInsets.all(16),
+                      ),
+                    );
+                  },
+                ),
+              ),
+      ),
     );
   }
 }
