@@ -41,7 +41,7 @@ class _ProdiPageState extends State<ProdiPage> {
                 final prodi = _prodiData[index];
                 return ListTile(
                   title: Text(prodi["name"] ?? "N/A"),
-                  subtitle: Text("fakultas: ${prodi["fakultas_id"][1]}"),
+                  subtitle: Text("Fakultas: ${prodi["fakultas_id"][1]}"),
                   trailing: SizedBox(
                     width: 100,
                     child: Text("Kaprodi: ${prodi["kaprodi"]}")
