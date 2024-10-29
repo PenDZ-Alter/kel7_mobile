@@ -139,13 +139,7 @@ class _ProdiPageState extends State<ProdiPage> {
       appBar: AppBar(
         title: const Text("Prodi Data"),
         backgroundColor: Colors.orangeAccent,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _showAddProdiForm(context),
-          ),
-        ],
+        centerTitle: true
       ),
       body: Container(
         color: const Color(0xFFE0F7FA), // Aqua blue background
@@ -182,6 +176,10 @@ class _ProdiPageState extends State<ProdiPage> {
                   },
                 ),
               ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddProdiForm(context),
+        child: Icon(Icons.add),
       ),
     );
   }

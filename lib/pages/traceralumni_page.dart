@@ -246,13 +246,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
       appBar: AppBar(
         title: const Text("Tracer Alumni Data"),
         backgroundColor: Colors.orangeAccent,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _showAddTracerAlumniForm(context),
-          ),
-        ],
+        centerTitle: true
       ),
       body: Container(
         color: const Color(0xFFE0F7FA), // Aqua blue background
@@ -287,6 +281,10 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                   },
                 ),
               ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTracerAlumniForm(context),
+        child: Icon(Icons.add),
       ),
     );
   }

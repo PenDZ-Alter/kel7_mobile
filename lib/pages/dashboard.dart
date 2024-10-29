@@ -23,7 +23,7 @@ class Dashboard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Odoo Data Dashboard',
+                'Menu',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
