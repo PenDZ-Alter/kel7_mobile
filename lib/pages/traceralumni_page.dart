@@ -42,7 +42,10 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                 return ListTile(
                   title: Text(alumni["name"] ?? "N/A"),
                   subtitle: Text("NIM: ${alumni["nim"]}, Tahun: ${alumni["tahun"]}"),
-                  trailing: Text("Status: ${alumni["status"]}"),
+                  trailing: SizedBox(
+                    width: 150,
+                    child: Text("Status: ${alumni["status"]}")
+                  ),
                 );
               },
             ),

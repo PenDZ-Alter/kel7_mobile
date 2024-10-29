@@ -23,7 +23,7 @@ class _ProdiPageState extends State<ProdiPage> {
 
   Future<void> _fetchProdiData() async {
     await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
-    _prodiData = await odoo.getData(model: 'annas.prodi', fields: ["name", "description", "fakultas_id", "kaprodi"]);
+    _prodiData = await odoo.getData(model: 'annas.prodi', fields: ["name", "description", "fakultas_id", "kaprodi"], limit: 15);
     setState(() {
       _loading = false;
     });
@@ -42,7 +42,10 @@ class _ProdiPageState extends State<ProdiPage> {
                 return ListTile(
                   title: Text(prodi["name"] ?? "N/A"),
                   subtitle: Text("fakultas: ${prodi["fakultas_id"][1]}"),
-                  trailing: Text("Kaprodi: ${prodi["kaprodi"]}"),
+                  trailing: SizedBox(
+                    width: 100,
+                    child: Text("Kaprodi: ${prodi["kaprodi"]}")
+                  ),
                 );
               },
             ),
