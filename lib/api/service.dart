@@ -1,13 +1,11 @@
 import 'package:odoo_rpc/odoo_rpc.dart';
 
 class OdooConnection {
-  final String _url;
   final OdooClient _odoo;
   var _session;
 
-  OdooConnection({required String url})
-      : _url = url,
-        _odoo = OdooClient(url);
+  OdooConnection({required String url}) :
+    _odoo = OdooClient(url);
 
   Future<dynamic> auth(String db, String user, String pass) async {
     try {
