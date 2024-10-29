@@ -23,7 +23,7 @@ class OdooConnection {
     required List<String> fields, 
     int? limit, 
     int? offset,
-    List<String>? domain
+    List<dynamic>? domain
     }) async {
     if (_session == null) {
       throw Exception("Not authenticated");

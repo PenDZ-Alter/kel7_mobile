@@ -12,26 +12,125 @@ class ProdiPage extends StatefulWidget {
 class _ProdiPageState extends State<ProdiPage> {
   late OdooConnection odoo;
   List<dynamic> _prodiData = [];
+  List<dynamic> _fakultasData = [];
   bool _loading = true;
+  bool _fakultasLoading = true;
 
   @override
   void initState() {
     super.initState();
     odoo = OdooConnection(url: dotenv.env['URL'] ?? "");
-    _fetchProdiData();
+    _fetchData();
   }
 
-  Future<void> _fetchProdiData() async {
-    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
-        dotenv.env['PASS'] ?? "");
-    _prodiData = await odoo.getData(
+  Future<void> _fetchData() async {
+    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
+
+    final prodiData = await odoo.getData(
       model: 'annas.prodi',
-      fields: ["name", "description", "fakultas_id", "kaprodi"],
-      limit: 15,
+      fields: ["name", "fakultas_id", "kaprodi"],
+      limit: 20,
     );
+
+    final fakultasData = await odoo.getData(
+      model: 'annas.fakultas',
+      fields: ["id", "name"],
+      limit: 20,
+    );
+
     setState(() {
+      _prodiData = prodiData;
+      _fakultasData = fakultasData;
       _loading = false;
+      _fakultasLoading = false;
     });
+  }
+
+  Future<void> _createProdiRecord(String name, String kodeProdi, int fakultasId, String kaprodi) async {
+    final newRecord = await odoo.createRecord(
+      model: 'annas.prodi',
+      data: {
+        "name": name,
+        "kode_prodi": kodeProdi,
+        "fakultas_id": fakultasId,
+        "kaprodi": kaprodi,
+      },
+    );
+    if (newRecord != null) {
+      _fetchData(); // Refresh the data after creation
+    }
+  }
+
+  void _showAddProdiForm(BuildContext context) {
+    final nameController = TextEditingController();
+    final kodeProdiController = TextEditingController();
+    final kaprodiController = TextEditingController();
+
+    int? selectedFakultasId;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Program Studi'),
+                  ),
+                  TextField(
+                    controller: kodeProdiController,
+                    decoration: const InputDecoration(labelText: 'Kode Program Studi'),
+                  ),
+                  _fakultasLoading
+                      ? const CircularProgressIndicator()
+                      : DropdownButtonFormField<int>(
+                          value: selectedFakultasId,
+                          decoration: const InputDecoration(labelText: 'Fakultas'),
+                          items: _fakultasData.map((fakultas) {
+                            return DropdownMenuItem<int>(
+                              value: fakultas["id"],
+                              child: Text(fakultas["name"]),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedFakultasId = value;
+                            });
+                          },
+                        ),
+                  TextField(
+                    controller: kaprodiController,
+                    decoration: const InputDecoration(labelText: 'Ketua Program Studi'),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      _createProdiRecord(
+                        nameController.text,
+                        kodeProdiController.text,
+                        selectedFakultasId!,
+                        kaprodiController.text,
+                      );
+                      Navigator.pop(ctx);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -41,6 +140,12 @@ class _ProdiPageState extends State<ProdiPage> {
         title: const Text("Prodi Data"),
         backgroundColor: Colors.orangeAccent,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => _showAddProdiForm(context),
+          ),
+        ],
       ),
       body: Container(
         color: const Color(0xFFE0F7FA), // Aqua blue background
