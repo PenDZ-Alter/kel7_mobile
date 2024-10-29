@@ -18,7 +18,12 @@ class OdooConnection {
     }
   }
 
-  Future<dynamic> getData({ required String model, required List<String> fields, int? limit, List<String>? domain }) async {
+  Future<dynamic> getData({ 
+    required String model, 
+    required List<String> fields, 
+    int? limit, 
+    List<String>? domain 
+    }) async {
     if (_session == null) {
       throw Exception("Not authenticated");
     }
