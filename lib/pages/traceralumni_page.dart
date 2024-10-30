@@ -193,6 +193,9 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                           onChanged: (value) {
                             setState(() {
                               selectedProdiId = value;
+                              if (value != null) {
+                                _fetchProdiData(value); // Fetch prodi data based on selected fakultas in real-time
+                              }
                             });
                           },
                         ),

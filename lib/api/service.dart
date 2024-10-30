@@ -51,6 +51,7 @@ class OdooConnection {
   Future<dynamic> createRecord({
     required String model,
     required Map<String, dynamic> data,
+    Map<String, dynamic>? kwargs
   }) async {
     if (_session == null) {
       throw Exception("Not authenticated");
@@ -61,7 +62,7 @@ class OdooConnection {
         'model': model,
         'method': 'create',
         'args': [data],
-        'kwargs': {}
+        'kwargs': kwargs
       });
     } on OdooException catch (err) {
       print('Error creating record: $err');
