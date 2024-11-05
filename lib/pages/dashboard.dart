@@ -8,13 +8,11 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double cardSize = MediaQuery.of(context).size.width * 0.35;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Odoo Data Dashboard'),
         centerTitle: true,
-        backgroundColor: Colors.orangeAccent, // Warna oranye pada AppBar
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Center(
         child: Padding(
@@ -27,12 +25,10 @@ class Dashboard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.orangeAccent, // Warna oranye untuk judul utama
+                  color: Colors.orangeAccent,
                 ),
               ),
               const SizedBox(height: 20),
-
-              // GridView untuk menampilkan button cards
               Flexible(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -40,24 +36,22 @@ class Dashboard extends StatelessWidget {
                   mainAxisSpacing: 20,
                   shrinkWrap: true,
                   children: [
-                    // Fakultas Data Card
                     buildCard(
                       context,
-                      title: 'View Fakultas Data',
+                      title: 'Fakultas',
+                      icon: Icons.school,
                       destinationPage: const FakultasPage(),
                     ),
-
-                    // Prodi Data Card
                     buildCard(
                       context,
-                      title: 'View Prodi Data',
+                      title: 'Prodi',
+                      icon: Icons.book,
                       destinationPage: const ProdiPage(),
                     ),
-
-                    // Tracer Alumni Data Card
                     buildCard(
                       context,
-                      title: 'View Tracer Alumni Data',
+                      title: 'Tracer Alumni',
+                      icon: Icons.people,
                       destinationPage: const TracerAlumniPage(),
                     ),
                   ],
@@ -67,13 +61,14 @@ class Dashboard extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: const Color(0xFFE0F7FA), // Warna biru aqua yang lembut
+      backgroundColor: const Color(0xFFE0F7FA),
     );
   }
 
-  // Fungsi bantuan untuk membuat kartu menu
   Card buildCard(BuildContext context,
-      {required String title, required Widget destinationPage}) {
+      {required String title,
+      required IconData icon,
+      required Widget destinationPage}) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -90,7 +85,7 @@ class Dashboard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Colors.orangeAccent, Colors.blueAccent],
@@ -99,14 +94,21 @@ class Dashboard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 48, color: Colors.white),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ),
