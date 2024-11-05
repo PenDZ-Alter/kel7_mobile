@@ -10,7 +10,14 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Odoo Data Dashboard'),
+        title: Row(
+          children: [
+            const SizedBox(width: 30),
+            const Icon(Icons.computer_rounded, color: Colors.white),
+            const SizedBox(width: 10),
+            const Text("Dashboard Mahasiswa"),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
       ),
@@ -20,13 +27,26 @@ class Dashboard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Menu',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orangeAccent,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.menu,
+                    color: Colors.orangeAccent,
+                  ),
+                  SizedBox(
+                      width:
+                          8), // Tambahkan jarak antara ikon dan teks jika diperlukan
+                  Text(
+                    'Menu',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orangeAccent,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Flexible(
