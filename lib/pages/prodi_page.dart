@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tugas1_ui/api/service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,12 +13,13 @@ class ProdiPage extends StatefulWidget {
 
 class _ProdiPageState extends State<ProdiPage> {
   late OdooConnection odoo;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> _prodiData = [];
   List<dynamic> _filteredProdiData = [];
   List<dynamic> _fakultasData = [];
   bool _loading = true;
   bool _fakultasLoading = true;
-  int _limit = 10;
+  int _limit = 20;
   int _offset = 0;
   bool _allFetched = false;
   String _searchQuery = "";
@@ -40,7 +43,7 @@ class _ProdiPageState extends State<ProdiPage> {
 
     final prodiData = await odoo.getData(
       model: 'annas.prodi',
-      fields: ["name", "fakultas_id", "kaprodi"],
+      fields: ["name", "fakultas_id", "kaprodi", "kode_prodi"],
       limit: _limit,
       offset: _offset,
     );
@@ -48,20 +51,23 @@ class _ProdiPageState extends State<ProdiPage> {
     final fakultasData = await odoo.getData(
       model: 'annas.fakultas',
       fields: ["id", "name"],
+      limit: 15
     );
 
-    setState(() {
-      _loading = false;
-      _fakultasLoading = false;
-      _fakultasData = fakultasData;
-      if (prodiData.isEmpty) {
-        _allFetched = true;
-      } else {
-        _prodiData.addAll(prodiData);
-        _filteredProdiData = _prodiData;
-        _offset += _limit;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+        _fakultasLoading = false;
+        _fakultasData = fakultasData;
+        if (prodiData.isEmpty) {
+          _allFetched = true;
+        } else {
+          _prodiData.addAll(prodiData);
+          _filteredProdiData = _prodiData;
+          _offset += _limit;
+        }
+      });
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -75,6 +81,8 @@ class _ProdiPageState extends State<ProdiPage> {
   }
 
   void _openAddProdiModal() {
+    if (!mounted) return; // Prevents accessing the context if the widget is not mounted.
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -85,18 +93,31 @@ class _ProdiPageState extends State<ProdiPage> {
         return ProdiFormModal(
           fakultasData: _fakultasData,
           onSubmit: (newProdi) async {
-            final response = await odoo.createRecord(
-              model: 'annas.prodi',
-              data: newProdi,
-            );
-            if (response != null) {
-              setState(() {
-                _prodiData.insert(0, newProdi);
-                _filteredProdiData = _prodiData;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Prodi berhasil ditambahkan")),
+            try {
+              final response = await odoo.createRecord(
+                model: 'annas.prodi',
+                data: newProdi,
               );
+              if (response != null) {
+                setState(() {
+                  _prodiData.insert(0, newProdi);
+                  _filteredProdiData = _prodiData;
+                });
+                // Wait briefly to allow UI to stabilize
+                await Future.delayed(const Duration(milliseconds: 300));
+                if (mounted)
+                  Navigator.of(_scaffoldKey.currentContext!).pop(); // Close the modal after updating
+                ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+                  const SnackBar(content: Text("Prodi berhasil ditambahkan")),
+                );
+              }
+            } catch (e) {
+              print("Error creating record : $e");
+              if (mounted) {
+                ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+                  SnackBar(content: Text("Failed to create record: $e")),
+                );
+              }
             }
           },
         );
@@ -104,9 +125,24 @@ class _ProdiPageState extends State<ProdiPage> {
     );
   }
 
+  String _getFakultasName(dynamic fakultasId) {
+    if (fakultasId is List && fakultasId.length > 1) {
+      return fakultasId[1].toString();  // Assuming it's a list with [ID, Name]
+    } else if (fakultasId is int) {
+      // If it's an ID, try to match with the name in `_fakultasData`
+      final fakultas = _fakultasData.firstWhere(
+        (f) => f['id'] == fakultasId,
+        orElse: () => null,
+      );
+      return fakultas != null ? fakultas['name'] : "Unknown Fakultas";
+    }
+    return "Unknown Fakultas";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Row(
           children: [
@@ -137,7 +173,7 @@ class _ProdiPageState extends State<ProdiPage> {
             ),
             Expanded(
               child: _loading
-                  ? const LinearProgressIndicator() // Loading indicator di atas
+                  ? const Center(child: CircularProgressIndicator()) // Loading indicator di atas
                   : RefreshIndicator(
                       onRefresh: _fetchProdiData,
                       child: ListView.builder(
@@ -146,8 +182,7 @@ class _ProdiPageState extends State<ProdiPage> {
                         itemBuilder: (context, index) {
                           if (index == _filteredProdiData.length &&
                               !_allFetched) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                            return null;
                           }
                           final prodi = _filteredProdiData[index];
                           return Card(
@@ -167,7 +202,7 @@ class _ProdiPageState extends State<ProdiPage> {
                                 ),
                               ),
                               subtitle: Text(
-                                "Fakultas: ${prodi["fakultas_id"][1]}\nKaprodi: ${prodi["kaprodi"]}",
+                                "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
                                 style: const TextStyle(color: Colors.black54),
                               ),
                               contentPadding: const EdgeInsets.all(16),
@@ -210,13 +245,13 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
   bool _isKodeProdiValid = true;
   bool _isKaprodiValid = true;
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _kodeProdiController.dispose();
-    _kaprodiController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _nameController.dispose();
+  //   _kodeProdiController.dispose();
+  //   _kaprodiController.dispose();
+  //   super.dispose();
+  // }
 
   void _submit() {
     setState(() {
@@ -229,6 +264,7 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
         _isKodeProdiValid &&
         _isKaprodiValid &&
         _selectedFakultasId != null) {
+      
       final newProdi = {
         "name": _nameController.text,
         "kode_prodi": _kodeProdiController.text,
@@ -300,7 +336,7 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
                 value: _selectedFakultasId,
                 items: widget.fakultasData.map((fakultas) {
                   return DropdownMenuItem<int>(
-                    value: fakultas['id'],
+                    value: fakultas['id'] as int,
                     child: Text(fakultas['name']),
                   );
                 }).toList(),
