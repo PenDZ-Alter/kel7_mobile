@@ -57,6 +57,9 @@ class OdooConnection {
       throw Exception("Not authenticated");
     }
 
+    kwargs = kwargs ?? {}; // Ensure kwargs is at least an empty map
+    kwargs['context'] = kwargs['context'] ?? {}; // Set context if it's not present
+
     try {
       return await _odoo.callKw({
         'model': model,
