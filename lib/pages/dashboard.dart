@@ -23,8 +23,10 @@ class Dashboard extends StatelessWidget {
                   constraints.maxWidth > 400
                       ? "Dashboard Mahasiswa"
                       : "Dashboard Mahasiswa",
-                  style:
-                      TextStyle(fontSize: constraints.maxWidth > 400 ? 20 : 18),
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ],
             );
