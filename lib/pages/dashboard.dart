@@ -1,7 +1,11 @@
+// dashboard.dart
 import 'package:flutter/material.dart';
 import 'fakultas_page.dart';
 import 'prodi_page.dart';
 import 'traceralumni_page.dart';
+import 'login.dart';
+import 'splash_screen.dart';
+import 'dart:async';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -16,15 +20,15 @@ class Dashboard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.computer_rounded, color: Colors.white),
-                const SizedBox(
-                    width:
-                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                const SizedBox(width: 8),
                 Text(
                   constraints.maxWidth > 400
                       ? "Dashboard Mahasiswa"
                       : "Dashboard Mahasiswa",
-                  style:
-                      TextStyle(fontSize: constraints.maxWidth > 400 ? 20 : 18),
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ],
             );
@@ -32,6 +36,23 @@ class Dashboard extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
+        actions: [
+          // This is logout button
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              // Show splash screen for 3 seconds on logout
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SplashScreen(
+                          targetPage: LoginPage(),
+                          message: "Logging out ...",
+                        )),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Padding(
@@ -47,9 +68,7 @@ class Dashboard extends StatelessWidget {
                     Icons.menu,
                     color: Colors.orangeAccent,
                   ),
-                  SizedBox(
-                      width:
-                          8), // Tambahkan jarak antara ikon dan teks jika diperlukan
+                  const SizedBox(width: 8),
                   Text(
                     'Menu',
                     style: TextStyle(

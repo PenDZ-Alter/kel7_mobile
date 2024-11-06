@@ -82,16 +82,30 @@ class _FakultasPageState extends State<FakultasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const SizedBox(width: 30),
-            const Icon(Icons.school_rounded, color: Colors.white),
-            const SizedBox(width: 10),
-            const Text("Data Fakultas"),
-          ],
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.school_rounded, color: Colors.white),
+                const SizedBox(
+                    width:
+                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                Text(
+                  constraints.maxWidth > 400
+                      ? "Data Fakultas"
+                      : "Data Fakultas",
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            );
+          },
         ),
-        backgroundColor: Colors.orangeAccent,
         centerTitle: true,
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Container(
         color: const Color(0xFFE0F7FA),
