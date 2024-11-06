@@ -49,10 +49,7 @@ class _ProdiPageState extends State<ProdiPage> {
     );
 
     final fakultasData = await odoo.getData(
-      model: 'annas.fakultas',
-      fields: ["id", "name"],
-      limit: 15
-    );
+        model: 'annas.fakultas', fields: ["id", "name"], limit: 15);
 
     if (mounted) {
       setState(() {
@@ -81,7 +78,8 @@ class _ProdiPageState extends State<ProdiPage> {
   }
 
   void _openAddProdiModal() {
-    if (!mounted) return; // Prevents accessing the context if the widget is not mounted.
+    if (!mounted)
+      return; // Prevents accessing the context if the widget is not mounted.
 
     showModalBottomSheet(
       context: context,
@@ -106,7 +104,8 @@ class _ProdiPageState extends State<ProdiPage> {
                 // Wait briefly to allow UI to stabilize
                 await Future.delayed(const Duration(milliseconds: 300));
                 if (mounted)
-                  Navigator.of(_scaffoldKey.currentContext!).pop(); // Close the modal after updating
+                  Navigator.of(_scaffoldKey.currentContext!)
+                      .pop(); // Close the modal after updating
                 ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
                   const SnackBar(content: Text("Prodi berhasil ditambahkan")),
                 );
@@ -127,7 +126,7 @@ class _ProdiPageState extends State<ProdiPage> {
 
   String _getFakultasName(dynamic fakultasId) {
     if (fakultasId is List && fakultasId.length > 1) {
-      return fakultasId[1].toString();  // Assuming it's a list with [ID, Name]
+      return fakultasId[1].toString(); // Assuming it's a list with [ID, Name]
     } else if (fakultasId is int) {
       // If it's an ID, try to match with the name in `_fakultasData`
       final fakultas = _fakultasData.firstWhere(
@@ -144,15 +143,30 @@ class _ProdiPageState extends State<ProdiPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Row(
-          children: [
-            const Icon(Icons.book_rounded, color: Colors.white),
-            const SizedBox(width: 10),
-            const Text("Data Program Studi"),
-          ],
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.book_rounded, color: Colors.white),
+                const SizedBox(
+                    width:
+                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                Text(
+                  constraints.maxWidth > 400
+                      ? "Data Program Studi"
+                      : "Data Program Studi",
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            );
+          },
         ),
-        backgroundColor: Colors.orangeAccent,
         centerTitle: true,
+        backgroundColor: Colors.orangeAccent,
       ),
       body: Container(
         color: const Color(0xFFE0F7FA),
@@ -173,7 +187,9 @@ class _ProdiPageState extends State<ProdiPage> {
             ),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator()) // Loading indicator di atas
+                  ? const Center(
+                      child:
+                          CircularProgressIndicator()) // Loading indicator di atas
                   : RefreshIndicator(
                       onRefresh: _fetchProdiData,
                       child: ListView.builder(
@@ -264,7 +280,6 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
         _isKodeProdiValid &&
         _isKaprodiValid &&
         _selectedFakultasId != null) {
-      
       final newProdi = {
         "name": _nameController.text,
         "kode_prodi": _kodeProdiController.text,
