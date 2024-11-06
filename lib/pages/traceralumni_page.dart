@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugas1_ui/api/service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tugas1_ui/pages/form_tracer.dart';
 
 class TracerAlumniPage extends StatefulWidget {
   const TracerAlumniPage({super.key});
@@ -16,7 +17,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
   List<dynamic> _prodiData = [];
   bool _loading = true;
   bool _fakultasLoading = true;
-  bool _prodiLoading = false; // Default to false to avoid unnecessary spinner
+  bool _prodiLoading = false;
 
   int? selectedFakultasId;
   int? selectedProdiId;
@@ -57,12 +58,11 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
   Future<void> _fetchProdiData(int fakultasId) async {
     setState(() {
       _prodiLoading = true;
-      _prodiData.clear(); // Clear existing data to reset dropdown options
+      _prodiData.clear();
       selectedProdiId = null;
     });
 
     try {
-      // Fetch Prodi data filtered by selected Fakultas
       _prodiData = await odoo.getData(
         model: 'annas.prodi',
         fields: ["id", "name"],
@@ -107,157 +107,29 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
       );
       if (newRecord != null) {
         _fetchData(); // Refresh data after creation
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data alumni berhasil disimpan!')),
+        );
       }
     } catch (e) {
       print("Error creating tracer alumni record: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan data alumni.')),
+      );
     }
   }
 
   void _showAddTracerAlumniForm(BuildContext context) {
-    final nameController = TextEditingController();
-    final nimController = TextEditingController();
-    final tahunController = TextEditingController();
-    final emailController = TextEditingController();
-    final nomorController = TextEditingController();
-    final alamatController = TextEditingController();
-    String? selectedStatus;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(labelText: 'Nama'),
-                  ),
-                  TextField(
-                    controller: nimController,
-                    decoration: const InputDecoration(labelText: 'NIM'),
-                  ),
-                  TextField(
-                    controller: tahunController,
-                    decoration: const InputDecoration(labelText: 'Tahun Lulus'),
-                  ),
-                  TextField(
-                    controller: emailController,
-                    decoration: const InputDecoration(labelText: 'Email Aktif'),
-                  ),
-                  TextField(
-                    controller: nomorController,
-                    decoration:
-                        const InputDecoration(labelText: 'Nomor Telepon'),
-                  ),
-                  TextField(
-                    controller: alamatController,
-                    decoration:
-                        const InputDecoration(labelText: 'Alamat Rumah'),
-                  ),
-                  _fakultasLoading
-                      ? const CircularProgressIndicator()
-                      : DropdownButtonFormField<int>(
-                          value: selectedFakultasId,
-                          decoration:
-                              const InputDecoration(labelText: 'Fakultas'),
-                          items: _fakultasData.map((fakultas) {
-                            return DropdownMenuItem<int>(
-                              value: fakultas["id"],
-                              child: Text(fakultas["name"]),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedFakultasId = value;
-                              if (value != null) {
-                                _fetchProdiData(value);
-                              }
-                            });
-                          },
-                        ),
-                  _prodiLoading
-                      ? const CircularProgressIndicator()
-                      : DropdownButtonFormField<int>(
-                          value: selectedProdiId,
-                          decoration:
-                              const InputDecoration(labelText: 'Program Studi'),
-                          items: _prodiData.map((prodi) {
-                            return DropdownMenuItem<int>(
-                              value: prodi["id"],
-                              child: Text(prodi["name"]),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedProdiId = value;
-                              if (value != null) {
-                                _fetchProdiData(
-                                    value); // Fetch prodi data based on selected fakultas in real-time
-                              }
-                            });
-                          },
-                        ),
-                  DropdownButtonFormField<String>(
-                    value: selectedStatus,
-                    decoration:
-                        const InputDecoration(labelText: 'Status Saat Ini'),
-                    items: const [
-                      DropdownMenuItem(
-                          value: 'working',
-                          child: Text('Bekerja (full time/part time)')),
-                      DropdownMenuItem(
-                          value: 'entrepreneur', child: Text('Wiraswasta')),
-                      DropdownMenuItem(
-                          value: 'studying',
-                          child: Text('Melanjutkan pendidikan')),
-                      DropdownMenuItem(
-                          value: 'unemployed',
-                          child:
-                              Text('Tidak kerja tetapi sedang mencari kerja')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (selectedFakultasId != null &&
-                          selectedProdiId != null &&
-                          selectedStatus != null) {
-                        _createTracerAlumniRecord(
-                          nameController.text,
-                          nimController.text,
-                          tahunController.text,
-                          emailController.text,
-                          nomorController.text,
-                          alamatController.text,
-                          selectedFakultasId!,
-                          selectedProdiId!,
-                          selectedStatus!,
-                        );
-                        Navigator.pop(ctx);
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FormTracer(odoo: odoo),
+      ),
     );
+  }
+
+  void _showSearch() {
+    showSearch(context: context, delegate: AlumniSearch(_traceralumniData));
   }
 
   @override
@@ -270,9 +142,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.people_rounded, color: Colors.white),
-                const SizedBox(
-                    width:
-                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                const SizedBox(width: 8),
                 Text(
                   constraints.maxWidth > 400 ? "Data Alumni" : "Data Alumni",
                   style: TextStyle(
@@ -286,46 +156,155 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: _showSearch,
+          ),
+        ],
       ),
       body: Container(
-        color: const Color(0xFFE0F7FA), // Aqua blue background
+        color: const Color(0xFFF5F5F5),
         child: _loading
             ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView.builder(
-                  itemCount: _traceralumniData.length,
-                  itemBuilder: (context, index) {
-                    final alumni = _traceralumniData[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                      shadowColor: Colors.orange.withOpacity(0.3),
-                      child: ListTile(
-                        title: Text(
-                          alumni["name"] ?? "N/A",
-                          style: const TextStyle(
-                            color: Colors.deepPurple,
-                            fontWeight: FontWeight.bold,
-                          ),
+            : _traceralumniData.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.info, size: 50, color: Colors.orange),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Tidak ada data alumni.",
+                          style: TextStyle(color: Colors.grey),
                         ),
-                        subtitle: Text(
-                            "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}"),
-                        trailing: const Icon(Icons.arrow_forward),
-                        onTap: () {},
-                      ),
-                    );
-                  },
-                ),
-              ),
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView.builder(
+                      itemCount: _traceralumniData.length,
+                      itemBuilder: (context, index) {
+                        final alumni = _traceralumniData[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          shadowColor: Colors.orange.withOpacity(0.3),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            title: Text(
+                              alumni["name"] ?? "N/A",
+                              style: const TextStyle(
+                                color: Colors.deepPurple,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}",
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            trailing: Icon(
+                              alumni["status"] == "working"
+                                  ? Icons.work
+                                  : alumni["status"] == "studying"
+                                      ? Icons.school
+                                      : Icons.person,
+                              color: Colors.orangeAccent,
+                            ),
+                            onTap: () {},
+                          ),
+                        );
+                      },
+                    ),
+                  ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.orangeAccent,
         onPressed: () => _showAddTracerAlumniForm(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
+    );
+  }
+}
+
+class AlumniSearch extends SearchDelegate {
+  final List<dynamic> alumniData;
+
+  AlumniSearch(this.alumniData);
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = alumniData.where((alumni) {
+      final name = alumni["name"]?.toLowerCase() ?? '';
+      final nim = alumni["nim"]?.toLowerCase() ?? '';
+      return name.contains(query.toLowerCase()) ||
+          nim.contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final alumni = results[index];
+        return ListTile(
+          title: Text(alumni["name"] ?? "N/A"),
+          subtitle: Text("NIM: ${alumni["nim"] ?? "N/A"}"),
+          onTap: () {
+            close(context, alumni);
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = alumniData.where((alumni) {
+      final name = alumni["name"]?.toLowerCase() ?? '';
+      final nim = alumni["nim"]?.toLowerCase() ?? '';
+      return name.contains(query.toLowerCase()) ||
+          nim.contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final alumni = suggestions[index];
+        return ListTile(
+          title: Text(alumni["name"] ?? "N/A"),
+          subtitle: Text("NIM: ${alumni["nim"] ?? "N/A"}"),
+          onTap: () {
+            query = alumni["name"] ?? '';
+            showResults(context);
+          },
+        );
+      },
     );
   }
 }
