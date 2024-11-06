@@ -10,13 +10,25 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const SizedBox(width: 30),
-            const Icon(Icons.computer_rounded, color: Colors.white),
-            const SizedBox(width: 10),
-            const Text("Dashboard Mahasiswa"),
-          ],
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.computer_rounded, color: Colors.white),
+                const SizedBox(
+                    width:
+                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                Text(
+                  constraints.maxWidth > 400
+                      ? "Dashboard Mahasiswa"
+                      : "Dashboard Mahasiswa",
+                  style:
+                      TextStyle(fontSize: constraints.maxWidth > 400 ? 20 : 18),
+                ),
+              ],
+            );
+          },
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
