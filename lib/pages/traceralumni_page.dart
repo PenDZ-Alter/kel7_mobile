@@ -30,7 +30,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
 
   Future<void> _fetchData() async {
     try {
-      await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
+      await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
+          dotenv.env['PASS'] ?? "");
 
       // Fetch Tracer Alumni data
       _traceralumniData = await odoo.getData(
@@ -153,17 +154,20 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                   ),
                   TextField(
                     controller: nomorController,
-                    decoration: const InputDecoration(labelText: 'Nomor Telepon'),
+                    decoration:
+                        const InputDecoration(labelText: 'Nomor Telepon'),
                   ),
                   TextField(
                     controller: alamatController,
-                    decoration: const InputDecoration(labelText: 'Alamat Rumah'),
+                    decoration:
+                        const InputDecoration(labelText: 'Alamat Rumah'),
                   ),
                   _fakultasLoading
                       ? const CircularProgressIndicator()
                       : DropdownButtonFormField<int>(
                           value: selectedFakultasId,
-                          decoration: const InputDecoration(labelText: 'Fakultas'),
+                          decoration:
+                              const InputDecoration(labelText: 'Fakultas'),
                           items: _fakultasData.map((fakultas) {
                             return DropdownMenuItem<int>(
                               value: fakultas["id"],
@@ -183,7 +187,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                       ? const CircularProgressIndicator()
                       : DropdownButtonFormField<int>(
                           value: selectedProdiId,
-                          decoration: const InputDecoration(labelText: 'Program Studi'),
+                          decoration:
+                              const InputDecoration(labelText: 'Program Studi'),
                           items: _prodiData.map((prodi) {
                             return DropdownMenuItem<int>(
                               value: prodi["id"],
@@ -194,19 +199,29 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                             setState(() {
                               selectedProdiId = value;
                               if (value != null) {
-                                _fetchProdiData(value); // Fetch prodi data based on selected fakultas in real-time
+                                _fetchProdiData(
+                                    value); // Fetch prodi data based on selected fakultas in real-time
                               }
                             });
                           },
                         ),
                   DropdownButtonFormField<String>(
                     value: selectedStatus,
-                    decoration: const InputDecoration(labelText: 'Status Saat Ini'),
+                    decoration:
+                        const InputDecoration(labelText: 'Status Saat Ini'),
                     items: const [
-                      DropdownMenuItem(value: 'working', child: Text('Bekerja (full time/part time)')),
-                      DropdownMenuItem(value: 'entrepreneur', child: Text('Wiraswasta')),
-                      DropdownMenuItem(value: 'studying', child: Text('Melanjutkan pendidikan')),
-                      DropdownMenuItem(value: 'unemployed', child: Text('Tidak kerja tetapi sedang mencari kerja')),
+                      DropdownMenuItem(
+                          value: 'working',
+                          child: Text('Bekerja (full time/part time)')),
+                      DropdownMenuItem(
+                          value: 'entrepreneur', child: Text('Wiraswasta')),
+                      DropdownMenuItem(
+                          value: 'studying',
+                          child: Text('Melanjutkan pendidikan')),
+                      DropdownMenuItem(
+                          value: 'unemployed',
+                          child:
+                              Text('Tidak kerja tetapi sedang mencari kerja')),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -217,7 +232,9 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      if (selectedFakultasId != null && selectedProdiId != null && selectedStatus != null) {
+                      if (selectedFakultasId != null &&
+                          selectedProdiId != null &&
+                          selectedStatus != null) {
                         _createTracerAlumniRecord(
                           nameController.text,
                           nimController.text,
@@ -247,9 +264,28 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tracer Alumni Data"),
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.people_rounded, color: Colors.white),
+                const SizedBox(
+                    width:
+                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                Text(
+                  constraints.maxWidth > 400 ? "Data Alumni" : "Data Alumni",
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            );
+          },
+        ),
+        centerTitle: true,
         backgroundColor: Colors.orangeAccent,
-        centerTitle: true
       ),
       body: Container(
         color: const Color(0xFFE0F7FA), // Aqua blue background
@@ -276,7 +312,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        subtitle: Text("NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}"),
+                        subtitle: Text(
+                            "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}"),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () {},
                       ),
