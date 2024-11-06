@@ -13,7 +13,7 @@ class _FakultasPageState extends State<FakultasPage> {
   late OdooConnection odoo;
   List<dynamic> _fakultasData = [];
   bool _loading = true;
-  int _limit = 10;
+  int _limit = 15;
   int _offset = 0;
   bool _allFetched = false;
 
@@ -26,10 +26,7 @@ class _FakultasPageState extends State<FakultasPage> {
 
   Future<void> _fetchFakultasData() async {
     if (_allFetched) return;
-
-    setState(() {
-      _loading = true;
-    });
+    print("Loading state status : $_loading");
 
     await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
         dotenv.env['PASS'] ?? "");
@@ -41,7 +38,9 @@ class _FakultasPageState extends State<FakultasPage> {
     );
 
     setState(() {
+      print("Set loading status : false");
       _loading = false;
+      print("Loading state status : $_loading");
       if (newData.isEmpty) {
         _allFetched = true;
       } else {
@@ -106,7 +105,7 @@ class _FakultasPageState extends State<FakultasPage> {
                     itemCount: _fakultasData.length + (_allFetched ? 0 : 1),
                     itemBuilder: (context, index) {
                       if (index == _fakultasData.length) {
-                        return const Center(child: CircularProgressIndicator());
+                        return null;
                       }
                       final fakultas = _fakultasData[index];
                       return Card(
