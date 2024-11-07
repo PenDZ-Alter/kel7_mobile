@@ -45,10 +45,10 @@ class Dashboard extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const SplashScreen(
-                          targetPage: LoginPage(),
-                          message: "Logging out ...",
-                        )),
+                  builder: (context) => const SplashScreen(
+                    targetPage: LoginPage(),
+                    message: "Logging out ...",
+                )),
               );
             },
           ),
