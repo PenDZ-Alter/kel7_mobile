@@ -86,10 +86,10 @@ class _FormTracerState extends State<FormTracer> {
             "email": _emailController.text,
             "nomor": _nomorController.text,
             "alamat": _alamatController.text,
-            "fakultas_id": _selectedFakultas,
-            "prodi_id": _selectedProdi,
+            "fakultas": _selectedFakultas,
+            "prodi": _selectedProdi,
             "status": _selectedStatus,
-          },
+          }
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Data alumni berhasil disimpan!')),
@@ -164,7 +164,7 @@ class _FormTracerState extends State<FormTracer> {
                 decoration: const InputDecoration(labelText: 'Fakultas'),
                 items: _fakultasData.map<DropdownMenuItem<int>>((fakultas) {
                   return DropdownMenuItem<int>(
-                    value: fakultas['id'],
+                    value: fakultas['id'] as int,
                     child: Text(fakultas['name']),
                   );
                 }).toList(),
@@ -184,7 +184,7 @@ class _FormTracerState extends State<FormTracer> {
                   decoration: const InputDecoration(labelText: 'Program Studi'),
                   items: _prodiData.map<DropdownMenuItem<int>>((prodi) {
                     return DropdownMenuItem<int>(
-                      value: prodi['id'],
+                      value: prodi['id'] as int,
                       child: Text(prodi['name']),
                     );
                   }).toList(),

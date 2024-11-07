@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tugas1_ui/pages/dashboard.dart';
 import 'package:tugas1_ui/pages/register.dart';
 import 'package:tugas1_ui/api/service.dart';
+import 'package:tugas1_ui/pages/splash_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,12 +16,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  late final OdooConnection odoo;
+  late final OdooConnection _odoo;
 
   @override
   void initState() {
     super.initState();
-    odoo = OdooConnection(url: dotenv.env['URL']!);
+    _odoo = OdooConnection(url: dotenv.env['URL']!);
   }
 
   Future<void> login() async {
@@ -28,11 +29,14 @@ class _LoginPageState extends State<LoginPage> {
     final user = usernameController.text;
     final pass = passwordController.text;
 
-    final session = await odoo.auth(dbName, user, pass);
+    final session = await _odoo.auth(dbName, user, pass);
     if (session != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Dashboard()),
+        MaterialPageRoute(builder: (context) => const SplashScreen(
+          targetPage: Dashboard(),
+          message: "Logging in ...",
+        )),
       );
     } else {
       showDialog(
@@ -75,12 +79,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               //onPressed: login,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Dashboard()),
-                );
-              },
+              onPressed: () => login(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
               ),
