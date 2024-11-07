@@ -26,7 +26,6 @@ class _FakultasPageState extends State<FakultasPage> {
 
   Future<void> _fetchFakultasData() async {
     if (_allFetched) return;
-    print("Loading state status : $_loading");
 
     await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
         dotenv.env['PASS'] ?? "");
@@ -38,9 +37,7 @@ class _FakultasPageState extends State<FakultasPage> {
     );
 
     setState(() {
-      print("Set loading status : false");
       _loading = false;
-      print("Loading state status : $_loading");
       if (newData.isEmpty) {
         _allFetched = true;
       } else {
