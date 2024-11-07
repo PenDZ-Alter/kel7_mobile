@@ -13,7 +13,6 @@ class OdooConnection {
       return _session;
     } on OdooException catch (err) {
       print('Error: $err');
-      _odoo.close();
       return null;
     }
   }

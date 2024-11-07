@@ -100,8 +100,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
           "email": email,
           "nomor": nomor,
           "alamat": alamat,
-          "fakultas_id": fakultasId,
-          "prodi_id": prodiId,
+          "fakultas": fakultasId,
+          "prodi": prodiId,
           "status": status,
         },
       );
