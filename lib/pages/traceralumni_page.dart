@@ -183,43 +183,46 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                   )
                 : Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ListView.builder(
-                      itemCount: _traceralumniData.length,
-                      itemBuilder: (context, index) {
-                        final alumni = _traceralumniData[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 4,
-                          shadowColor: Colors.orange.withOpacity(0.3),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 16),
-                            title: Text(
-                              alumni["name"] ?? "N/A",
-                              style: const TextStyle(
-                                color: Colors.deepPurple,
-                                fontWeight: FontWeight.bold,
+                    child: RefreshIndicator(
+                      onRefresh: _fetchData,
+                      child: ListView.builder(
+                        itemCount: _traceralumniData.length,
+                        itemBuilder: (context, index) {
+                          final alumni = _traceralumniData[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 4,
+                            shadowColor: Colors.orange.withOpacity(0.3),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              title: Text(
+                                alumni["name"] ?? "N/A",
+                                style: const TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
+                              subtitle: Text(
+                                "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}",
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                              trailing: Icon(
+                                alumni["status"] == "working"
+                                    ? Icons.work
+                                    : alumni["status"] == "studying"
+                                        ? Icons.school
+                                        : Icons.person,
+                                color: Colors.orangeAccent,
+                              ),
+                              onTap: () {},
                             ),
-                            subtitle: Text(
-                              "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}",
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                            trailing: Icon(
-                              alumni["status"] == "working"
-                                  ? Icons.work
-                                  : alumni["status"] == "studying"
-                                      ? Icons.school
-                                      : Icons.person,
-                              color: Colors.orangeAccent,
-                            ),
-                            onTap: () {},
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
       ),

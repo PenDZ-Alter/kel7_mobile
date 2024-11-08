@@ -48,6 +48,7 @@ class Dashboard extends StatelessWidget {
                   builder: (context) => const SplashScreen(
                     targetPage: LoginPage(),
                     message: "Logging out ...",
+                    isRevert: true,
                 )),
               );
             },
