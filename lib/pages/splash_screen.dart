@@ -73,7 +73,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           AnimatedBuilder(
             animation: _animation,
             builder: (context, child) {
-              print("Height from Media Query : " + MediaQuery.of(context).size.height.toString());
               return ClipPath(
                 clipper: WaveClipper(_animation.value),
                 child: Container(

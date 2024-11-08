@@ -12,11 +12,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -32,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    usernameController.dispose();
+    nameController.dispose();
     passwordController.dispose();
     emailController.dispose();
     confirmPasswordController.dispose();
@@ -89,6 +89,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> register() async {
+    await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "", dotenv.env['PASS'] ?? "");
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -96,9 +98,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
       try {
         final data = {
-          'login': usernameController.text,
+          'name': nameController.text,
+          'login': emailController.text,
           'password': passwordController.text,
-          'email': emailController.text,
+          'in_group_12': true,
+          'sel_groups_1_10_11': 11
         };
 
         final response =
@@ -174,20 +178,19 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Username field
+                  // Name field
                   TextFormField(
-                    controller: usernameController,
+                    controller: nameController,
                     decoration: InputDecoration(
-                      labelText: 'Username',
-                      prefixIcon:
-                          const Icon(Icons.person, color: Colors.deepPurple),
+                      labelText: 'Name',
+                      prefixIcon: const Icon(Icons.person, color: Colors.deepPurple),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Username is required';
+                        return 'Name is required';
                       }
                       return null;
                     },
