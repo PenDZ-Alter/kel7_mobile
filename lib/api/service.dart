@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:odoo_rpc/odoo_rpc.dart';
 
 class OdooConnection {
@@ -71,4 +73,59 @@ class OdooConnection {
       return null;
     }
   }
+
+  // Debug
+  Future<void> getFieldsInfo({ required String model }) async {
+    if (_session == null) throw Exception("Not Authenticated!");
+
+    try {
+      // Call fields_get to retrieve all fields from the 'res.users' model
+      final fields = await _odoo.callKw({
+        'model': model,
+        'method': 'fields_get',
+        'args': [],
+        'kwargs': {
+          'attributes': ['string', 'help', 'type'] // Optional attributes to retrieve
+        },
+      });
+
+      // Print out the fields or use them as needed
+      String fieldsJSON = jsonEncode(fields);
+      print(fieldsJSON);
+    } on OdooException catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // Debug
+  Future<void> getUsersInfo() async {
+    try {
+      // Define the fields you want to retrieve for each user
+      List<String> fieldsToRetrieve = [
+        'name',       // User's name
+        'login',      // User's login
+        'email',      // User's email
+        'phone',      // User's phone number
+        'groups_id'
+        // Add other fields as needed
+      ];
+
+      // Use search_read to get user information
+      final users = await _odoo.callKw({
+        'model': 'res.users',
+        'method': 'search_read',
+        'args': [],
+        'kwargs': {
+          'fields': fieldsToRetrieve,
+          'limit': 10,  // Optional: limit the number of records
+        },
+      });
+
+      // Print out the user information
+      print(users);
+    } on OdooException catch (e) {
+      print('Error: $e');
+    }
+  }
+
 }
