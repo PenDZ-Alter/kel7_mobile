@@ -15,7 +15,7 @@ void main() async {
       Platform.isLinux ||
       Platform.isMacOS ||
       Platform.isFuchsia) {
-    setWindowTitle('O');
+    setWindowTitle('Alumni Finder');
     var windowInfo = await getWindowInfo();
     var size = windowInfo.frame!.size;
     setWindowMinSize(
@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreenApp(targetPage: LoginPage(), message: "Loading"),
+      home: const SplashScreenApp(
+          targetPage: LoginPage(), message: "Alumni Finder App"),
     );
   }
 }
