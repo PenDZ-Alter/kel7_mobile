@@ -456,33 +456,39 @@ class _LoginPageState extends State<LoginPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: _googleSignIn,
-                          icon: const Icon(Icons.g_mobiledata,
-                              color: Colors.white),
-                          label: const Text(
-                            'Sign in with Google',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Flexible(
+                          flex: 1,
+                          child: ElevatedButton.icon(
+                            onPressed: _googleSignIn,
+                            icon: const Icon(Icons.g_mobiledata,
+                                color: Colors.white),
+                            label: const Text(
+                              'Sign in with Google',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: _facebookSignIn,
-                          icon: const Icon(Icons.facebook, color: Colors.white),
-                          label: const Text(
-                            'Sign in with Facebook',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3B5998),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Flexible(
+                          flex: 1,
+                          child: ElevatedButton.icon(
+                            onPressed: _facebookSignIn,
+                            icon: const Icon(Icons.facebook, color: Colors.white),
+                            label: const Text(
+                              'Sign in with Facebook',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF3B5998),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
