@@ -5,7 +5,6 @@ import 'prodi_page.dart';
 import 'traceralumni_page.dart';
 import 'login.dart';
 import 'splash_screen.dart';
-import 'dart:async';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -45,11 +44,11 @@ class Dashboard extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SplashScreen(
-                    targetPage: LoginPage(),
-                    message: "Logging out ...",
-                    isRevert: true,
-                )),
+                    builder: (context) => const SplashScreen(
+                          targetPage: LoginPage(),
+                          message: "Logging out ...",
+                          isRevert: true,
+                        )),
               );
             },
           ),
