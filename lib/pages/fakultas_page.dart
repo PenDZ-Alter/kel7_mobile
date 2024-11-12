@@ -37,6 +37,8 @@ class _FakultasPageState extends State<FakultasPage> {
     );
 
     setState(() {
+      if (!mounted) return;
+      
       _loading = false;
       if (newData.isEmpty) {
         _allFetched = true;

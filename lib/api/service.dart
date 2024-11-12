@@ -74,6 +74,92 @@ class OdooConnection {
     }
   }
 
+  Future<bool> updateRecord({
+    required String model,
+    required int recordId,
+    required Map<String, dynamic> data,
+    Map<String, dynamic>? kwargs
+  }) async {
+    if (_session == null) {
+      throw Exception("Not authenticated");
+    }
+
+    kwargs = kwargs ?? {};
+    kwargs['context'] = kwargs['context'] ?? {};
+
+    try {
+      await _odoo.callKw({
+        'model': model,
+        'method': 'write',
+        'args': [
+          [recordId], // IDs of records to update
+          data       // Values to update
+        ],
+        'kwargs': kwargs
+      });
+      return true;
+    } on OdooException catch (err) {
+      print('Error updating record: $err');
+      return false;
+    }
+  }
+
+  Future<bool> deleteRecord({
+    required String model,
+    required List<int> recordIds,
+    Map<String, dynamic>? kwargs
+  }) async {
+    if (_session == null) {
+      throw Exception("Not authenticated");
+    }
+
+    kwargs = kwargs ?? {};
+    kwargs['context'] = kwargs['context'] ?? {};
+
+    try {
+      await _odoo.callKw({
+        'model': model,
+        'method': 'unlink',
+        'args': [recordIds],
+        'kwargs': kwargs
+      });
+      return true;
+    } on OdooException catch (err) {
+      print('Error deleting record: $err');
+      return false;
+    }
+  }
+
+  Future<bool> updateMultipleRecords({
+    required String model,
+    required List<int> recordIds,
+    required Map<String, dynamic> data,
+    Map<String, dynamic>? kwargs
+  }) async {
+    if (_session == null) {
+      throw Exception("Not authenticated");
+    }
+
+    kwargs = kwargs ?? {};
+    kwargs['context'] = kwargs['context'] ?? {};
+
+    try {
+      await _odoo.callKw({
+        'model': model,
+        'method': 'write',
+        'args': [
+          recordIds, // List of IDs to update
+          data      // Values to update
+        ],
+        'kwargs': kwargs
+      });
+      return true;
+    } on OdooException catch (err) {
+      print('Error updating multiple records: $err');
+      return false;
+    }
+  }
+
   // Debug
   Future<void> getFieldsInfo({ required String model }) async {
     if (_session == null) throw Exception("Not Authenticated!");
