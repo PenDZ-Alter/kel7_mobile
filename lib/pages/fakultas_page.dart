@@ -36,17 +36,17 @@ class _FakultasPageState extends State<FakultasPage> {
       offset: _offset,
     );
 
-    setState(() {
-      if (!mounted) return;
-      
-      _loading = false;
-      if (newData.isEmpty) {
-        _allFetched = true;
-      } else {
-        _fakultasData.addAll(newData);
-        _offset += _limit;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+        if (newData.isEmpty) {
+          _allFetched = true;
+        } else {
+          _fakultasData.addAll(newData);
+          _offset += _limit;
+        }
+      });
+    }
   }
 
   void _openAddFakultasModal() {

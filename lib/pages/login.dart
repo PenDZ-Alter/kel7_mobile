@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage>
         if (_rememberMe) {
           await _saveRememberMeState();
         }
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => const SplashScreen(
@@ -119,6 +119,7 @@ class _LoginPageState extends State<LoginPage>
               message: "Logging in ...",
             ),
           ),
+          (route) => false
         );
       } else {
         setState(() {
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage>
       final googleSignIn = GoogleSignIn();
       final googleUser = await googleSignIn.signIn();
       if (googleUser != null) {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => const SplashScreen(
@@ -151,6 +152,7 @@ class _LoginPageState extends State<LoginPage>
               message: "Logging in ...",
             ),
           ),
+          (route) => false
         );
       }
     } catch (e, stackTrace) {
@@ -166,7 +168,7 @@ class _LoginPageState extends State<LoginPage>
       final facebookAuth = FacebookAuth.instance;
       final facebookLoginResult = await facebookAuth.login();
       if (facebookLoginResult.status == LoginStatus.success) {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => const SplashScreen(
@@ -174,6 +176,7 @@ class _LoginPageState extends State<LoginPage>
               message: "Logging in ...",
             ),
           ),
+          (route) => false
         );
       }
     } catch (e, stackTrace) {

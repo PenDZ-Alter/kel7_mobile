@@ -120,12 +120,7 @@ class _RegisterPageState extends State<RegisterPage>
 
       // Navigate to login page after successful registration
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ),
-        );
+        Navigator.pop(context);
       }
     } catch (e, stackTrace) {
       _logger.severe('Registration error:', e, stackTrace);
