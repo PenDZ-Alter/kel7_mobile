@@ -21,6 +21,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
   void initState() {
     super.initState();
     odoo = OdooConnection(url: dotenv.env['URL'] ?? "");
+    _filteredTracerData = [];
     _fetchData();
   }
 
