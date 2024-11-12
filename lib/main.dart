@@ -17,7 +17,7 @@ void main() async {
       Platform.isFuchsia) {
     setWindowTitle('Alumni Finder');
     var windowInfo = await getWindowInfo();
-    var size = windowInfo.frame!.size;
+    var size = windowInfo.frame.size;
     setWindowMinSize(
         Size(size.width * 0.3125, size.height * 0.8333)); // Minimum window size
     setWindowMaxSize(
