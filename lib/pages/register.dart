@@ -135,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.1),
+          backgroundColor: Colors.white.withOpacity(0.2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -164,12 +164,11 @@ class _RegisterPageState extends State<RegisterPage>
                   onPressed: () {
                     Navigator.of(context).pop(); // Close dialog
                     Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                      (routes) => false
-                    );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                        (routes) => false);
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.deepPurple.shade800,
