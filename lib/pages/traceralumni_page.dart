@@ -32,6 +32,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
         model: 'annas.traceralumni',
         fields: ["name", "nim", "tahun", "email", "status"],
       );
+      _filteredTracerData =
+          List.from(_traceralumniData); // Salin data awal ke filtered data
     } catch (e) {
       print("Error fetching initial data: $e");
     } finally {
@@ -54,7 +56,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
     setState(() {
       _searchQuery = query;
       _filteredTracerData = _traceralumniData.where((traceralumni) {
-        final name = traceralumni["name"].toLowerCase();
+        final name = traceralumni["name"]?.toLowerCase() ?? '';
         return name.contains(query.toLowerCase());
       }).toList();
     });
@@ -105,7 +107,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
-                  : _traceralumniData.isEmpty
+                  : _filteredTracerData.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -123,9 +125,9 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                           child: RefreshIndicator(
                             onRefresh: _fetchData,
                             child: ListView.builder(
-                              itemCount: _traceralumniData.length,
+                              itemCount: _filteredTracerData.length,
                               itemBuilder: (context, index) {
-                                final alumni = _traceralumniData[index];
+                                final alumni = _filteredTracerData[index];
                                 return Card(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
