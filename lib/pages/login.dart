@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage>
         if (_rememberMe) {
           await _saveRememberMeState();
         }
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => const SplashScreen(
@@ -117,6 +117,7 @@ class _LoginPageState extends State<LoginPage>
               message: "Logging in ...",
             ),
           ),
+          (routes) => false
         );
       } else {
         setState(() {

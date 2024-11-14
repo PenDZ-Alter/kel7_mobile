@@ -163,11 +163,12 @@ class _RegisterPageState extends State<RegisterPage>
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close dialog
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginPage(),
                       ),
+                      (routes) => false
                     );
                   },
                   style: TextButton.styleFrom(
