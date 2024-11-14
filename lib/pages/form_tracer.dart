@@ -18,6 +18,7 @@ class _FormTracerState extends State<FormTracer> {
   final _emailController = TextEditingController();
   final _nomorController = TextEditingController();
   final _alamatController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int? _selectedFakultas;
   int? _selectedProdi;
@@ -77,20 +78,17 @@ class _FormTracerState extends State<FormTracer> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await widget.odoo.createRecord(
-          model: 'annas.traceralumni',
-          data: {
-            "name": _nameController.text,
-            "nim": _nimController.text,
-            "tahun": _tahunController.text,
-            "email": _emailController.text,
-            "nomor": _nomorController.text,
-            "alamat": _alamatController.text,
-            "fakultas": _selectedFakultas,
-            "prodi": _selectedProdi,
-            "status": _selectedStatus,
-          }
-        );
+        await widget.odoo.createRecord(model: 'annas.traceralumni', data: {
+          "name": _nameController.text,
+          "nim": _nimController.text,
+          "tahun": _tahunController.text,
+          "email": _emailController.text,
+          "nomor": _nomorController.text,
+          "alamat": _alamatController.text,
+          "fakultas": _selectedFakultas,
+          "prodi": _selectedProdi,
+          "status": _selectedStatus,
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Data alumni berhasil disimpan!')),
         );
@@ -107,29 +105,47 @@ class _FormTracerState extends State<FormTracer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text("Form Tracer Alumni"),
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.assignment_outlined, color: Colors.white),
+                const SizedBox(
+                    width:
+                        8), // Mengurangi jarak agar lebih kompak di layar kecil
+                Text(
+                  constraints.maxWidth > 400
+                      ? "Form Tracer Alumni"
+                      : "Form Tracer",
+                  style: TextStyle(
+                      fontSize: constraints.maxWidth > 400 ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ],
+            );
+          },
+        ),
         backgroundColor: Colors.orangeAccent,
+        centerTitle: true,
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.white.withOpacity(0.95), // Warna latar belakang lembut
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nama'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nama harus diisi' : null,
-              ),
-              TextFormField(
-                controller: _nimController,
-                decoration: const InputDecoration(labelText: 'NIM'),
-                validator: (value) => value!.isEmpty ? 'NIM harus diisi' : null,
-              ),
+              _buildTextField(_nameController, 'Nama', Icons.person),
+              _buildTextField(_nimController, 'NIM', Icons.badge),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Tahun Lulus'),
+                decoration: const InputDecoration(
+                  labelText: 'Tahun Lulus',
+                  prefixIcon: Icon(Icons.calendar_today),
+                ),
                 items: List.generate(
                   27,
                   (index) => DropdownMenuItem(
@@ -142,26 +158,14 @@ class _FormTracerState extends State<FormTracer> {
                 validator: (value) =>
                     value == null ? 'Tahun lulus harus dipilih' : null,
               ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email Aktif'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Email harus diisi' : null,
-              ),
-              TextFormField(
-                controller: _nomorController,
-                decoration: const InputDecoration(labelText: 'Nomor Telepon'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nomor telepon harus diisi' : null,
-              ),
-              TextFormField(
-                controller: _alamatController,
-                decoration: const InputDecoration(labelText: 'Alamat Rumah'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Alamat harus diisi' : null,
-              ),
+              _buildTextField(_emailController, 'Email Aktif', Icons.email),
+              _buildTextField(_nomorController, 'Nomor Telepon', Icons.phone),
+              _buildTextField(_alamatController, 'Alamat Rumah', Icons.home),
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: 'Fakultas'),
+                decoration: const InputDecoration(
+                  labelText: 'Fakultas',
+                  prefixIcon: Icon(Icons.school),
+                ),
                 items: _fakultasData.map<DropdownMenuItem<int>>((fakultas) {
                   return DropdownMenuItem<int>(
                     value: fakultas['id'] as int,
@@ -178,10 +182,13 @@ class _FormTracerState extends State<FormTracer> {
                     value == null ? 'Fakultas harus dipilih' : null,
               ),
               if (_prodiLoading)
-                const CircularProgressIndicator()
+                const Center(child: CircularProgressIndicator())
               else
                 DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(labelText: 'Program Studi'),
+                  decoration: const InputDecoration(
+                    labelText: 'Program Studi',
+                    prefixIcon: Icon(Icons.book),
+                  ),
                   items: _prodiData.map<DropdownMenuItem<int>>((prodi) {
                     return DropdownMenuItem<int>(
                       value: prodi['id'] as int,
@@ -193,8 +200,10 @@ class _FormTracerState extends State<FormTracer> {
                       value == null ? 'Program studi harus dipilih' : null,
                 ),
               DropdownButtonFormField<String>(
-                decoration:
-                    const InputDecoration(labelText: 'Status Anda saat ini'),
+                decoration: const InputDecoration(
+                  labelText: 'Status Anda saat ini',
+                  prefixIcon: Icon(Icons.work),
+                ),
                 items: const [
                   DropdownMenuItem(
                       value: 'working',
@@ -217,12 +226,34 @@ class _FormTracerState extends State<FormTracer> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orangeAccent,
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 4,
                 ),
                 child: const Text('Simpan Data Alumni'),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller, String labelText, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        validator: (value) => value!.isEmpty ? '$labelText harus diisi' : null,
       ),
     );
   }
