@@ -343,8 +343,11 @@ class _RegisterPageState extends State<RegisterPage>
                             const SizedBox(height: 16),
                             Text(
                               _errorMessage,
-                              style: const TextStyle(
-                                color: Colors.redAccent,
+                              style: TextStyle(
+                                color: _errorMessage ==
+                                        'User registered successfully!'
+                                    ? Colors.greenAccent
+                                    : Colors.redAccent,
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.center,

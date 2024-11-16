@@ -56,6 +56,14 @@ class _FakultasPageState extends State<FakultasPage> {
     }
   }
 
+  Future<void> deleteData(int id) async {
+    try {
+      await odoo.deleteRecord(model: 'annas.fakultas', recordIds: [id]);
+    } catch (err) {
+      print(err);
+    }
+  }
+
   void _onSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
@@ -328,12 +336,31 @@ class _FakultasPageState extends State<FakultasPage> {
                                                                 children: [
                                                                   TextButton(
                                                                     onPressed:
-                                                                        () {
+                                                                        () async {
                                                                       Navigator.of(
                                                                               context)
-                                                                          .pop();
+                                                                          .pop(); // Tutup dialog konfirmasi
+                                                                      setState(
+                                                                          () {
+                                                                        _FilteredfakultasData.remove(
+                                                                            fakultas); // Hapus item dari daftar lokal
+                                                                      });
+
+                                                                      await deleteData(
+                                                                          fakultas[
+                                                                              'id']);
+
+                                                                      // Reload data dari server
+                                                                      await _fetchFakultasData();
+
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                        const SnackBar(
+                                                                            content:
+                                                                                Text("Data berhasil dihapus")),
+                                                                      );
                                                                     },
-                                                                    // style button edit
                                                                     style: TextButton
                                                                         .styleFrom(
                                                                       backgroundColor:
