@@ -13,14 +13,9 @@ class TracerAlumniPage extends StatefulWidget {
 class _TracerAlumniPageState extends State<TracerAlumniPage> {
   late OdooConnection odoo;
   List<dynamic> _traceralumniData = [];
-  List<dynamic> _fakultasData = [];
-  List<dynamic> _prodiData = [];
+  List<dynamic> _filteredTracerData = [];
   bool _loading = true;
-  bool _fakultasLoading = true;
-  bool _prodiLoading = false;
-
-  int? selectedFakultasId;
-  int? selectedProdiId;
+  String _searchQuery = "";
 
   @override
   void initState() {
@@ -33,103 +28,38 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
     try {
       await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
           dotenv.env['PASS'] ?? "");
-
-      // Fetch Tracer Alumni data
       _traceralumniData = await odoo.getData(
         model: 'annas.traceralumni',
         fields: ["name", "nim", "tahun", "email", "status"],
       );
-
-      // Fetch Fakultas data
-      _fakultasData = await odoo.getData(
-        model: 'annas.fakultas',
-        fields: ["id", "name"],
-      );
+      _filteredTracerData =
+          List.from(_traceralumniData); // Salin data awal ke filtered data
     } catch (e) {
       print("Error fetching initial data: $e");
     } finally {
-      setState(() {
-        _loading = false;
-        _fakultasLoading = false;
-      });
-    }
-  }
-
-  Future<void> _fetchProdiData(int fakultasId) async {
-    setState(() {
-      _prodiLoading = true;
-      _prodiData.clear();
-      selectedProdiId = null;
-    });
-
-    try {
-      _prodiData = await odoo.getData(
-        model: 'annas.prodi',
-        fields: ["id", "name"],
-        domain: [
-          ['fakultas_id', '=', fakultasId]
-        ],
-      );
-    } catch (e) {
-      print("Error fetching prodi data: $e");
-    } finally {
-      setState(() {
-        _prodiLoading = false;
-      });
-    }
-  }
-
-  Future<void> _createTracerAlumniRecord(
-    String name,
-    String nim,
-    String tahun,
-    String email,
-    String nomor,
-    String alamat,
-    int fakultasId,
-    int prodiId,
-    String status,
-  ) async {
-    try {
-      final newRecord = await odoo.createRecord(
-        model: 'annas.traceralumni',
-        data: {
-          "name": name,
-          "nim": nim,
-          "tahun": tahun,
-          "email": email,
-          "nomor": nomor,
-          "alamat": alamat,
-          "fakultas": fakultasId,
-          "prodi": prodiId,
-          "status": status,
-        },
-      );
-      if (newRecord != null) {
-        _fetchData(); // Refresh data after creation
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data alumni berhasil disimpan!')),
-        );
-      }
-    } catch (e) {
-      print("Error creating tracer alumni record: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menyimpan data alumni.')),
-      );
+      setState(() => _loading = false);
     }
   }
 
   void _showAddTracerAlumniForm(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => FormTracer(odoo: odoo),
-      ),
+      MaterialPageRoute(builder: (context) => FormTracer(odoo: odoo)),
     );
   }
 
-  void _showSearch() {
-    showSearch(context: context, delegate: AlumniSearch(_traceralumniData));
+  // void _showSearch() {
+  //   showSearch(context: context, delegate: AlumniSearch(_traceralumniData));
+  // }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query;
+      _filteredTracerData = _traceralumniData.where((traceralumni) {
+        final name = traceralumni["name"]?.toLowerCase() ?? '';
+        return name.contains(query.toLowerCase());
+      }).toList();
+    });
   }
 
   @override
@@ -156,75 +86,109 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.orangeAccent,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: _showSearch,
-          ),
-        ],
       ),
       body: Container(
-        color: const Color(0xFFF5F5F5),
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _traceralumniData.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.info, size: 50, color: Colors.orange),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Tidak ada data alumni.",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: RefreshIndicator(
-                      onRefresh: _fetchData,
-                      child: ListView.builder(
-                        itemCount: _traceralumniData.length,
-                        itemBuilder: (context, index) {
-                          final alumni = _traceralumniData[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 8.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 4,
-                            shadowColor: Colors.orange.withOpacity(0.3),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              title: Text(
-                                alumni["name"] ?? "N/A",
-                                style: const TextStyle(
-                                  color: Colors.deepPurple,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "NIM: ${alumni["nim"] ?? "N/A"}\nTahun: ${alumni["tahun"] ?? "N/A"}",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              trailing: Icon(
-                                alumni["status"] == "working"
-                                    ? Icons.work
-                                    : alumni["status"] == "studying"
-                                        ? Icons.school
-                                        : Icons.person,
-                                color: Colors.orangeAccent,
-                              ),
-                              onTap: () {},
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+        color: const Color(0xFFE0F7FA),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'Cari Alumni...',
+                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filteredTracerData.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.info_outline,
+                                  size: 60, color: Colors.orange),
+                              const SizedBox(height: 10),
+                              const Text("Tidak ada data alumni.",
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 4.0),
+                          child: RefreshIndicator(
+                            onRefresh: _fetchData,
+                            child: ListView.builder(
+                              itemCount: _filteredTracerData.length,
+                              itemBuilder: (context, index) {
+                                final alumni = _filteredTracerData[index];
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 0.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                  shadowColor: Colors.orange.withOpacity(0.3),
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.all(16),
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.orangeAccent,
+                                      child: Icon(
+                                        alumni["status"] == "working"
+                                            ? Icons.work_outline
+                                            : alumni["status"] == "studying"
+                                                ? Icons.school
+                                                : Icons.person,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      alumni["name"] ?? "N/A",
+                                      style: const TextStyle(
+                                        color: Colors.deepOrange,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        Text("NIM: ${alumni["nim"] ?? "N/A"}",
+                                            style: TextStyle(
+                                                color: Colors.grey[600])),
+                                        Text(
+                                            "Tahun: ${alumni["tahun"] ?? "N/A"}",
+                                            style: TextStyle(
+                                                color: Colors.grey[600])),
+                                      ],
+                                    ),
+                                    trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.orangeAccent),
+                                    onTap: () {
+                                      // Implement action when an alumni item is tapped
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orangeAccent,
@@ -244,7 +208,7 @@ class AlumniSearch extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -255,7 +219,7 @@ class AlumniSearch extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, null);
       },

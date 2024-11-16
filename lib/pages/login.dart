@@ -110,15 +110,14 @@ class _LoginPageState extends State<LoginPage>
           await _saveRememberMeState();
         }
         Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SplashScreen(
-              targetPage: Dashboard(),
-              message: "Logging in ...",
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SplashScreen(
+                targetPage: Dashboard(),
+                message: "Logging in ...",
+              ),
             ),
-          ),
-          (routes) => false
-        );
+            (routes) => false);
       } else {
         setState(() {
           _errorMessage = 'Invalid username or password.';
@@ -246,7 +245,7 @@ class _LoginPageState extends State<LoginPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.1),
+          backgroundColor: Colors.white.withOpacity(0.2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

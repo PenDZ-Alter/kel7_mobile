@@ -12,10 +12,12 @@ class FakultasPage extends StatefulWidget {
 class _FakultasPageState extends State<FakultasPage> {
   late OdooConnection odoo;
   List<dynamic> _fakultasData = [];
+  List<dynamic> _FilteredfakultasData = [];
   bool _loading = true;
   int _limit = 15;
   int _offset = 0;
   bool _allFetched = false;
+  String _searchQuery = "";
 
   @override
   void initState() {
@@ -27,6 +29,10 @@ class _FakultasPageState extends State<FakultasPage> {
   Future<void> _fetchFakultasData() async {
     if (_allFetched) return;
 
+    setState(() {
+      _loading = true;
+    });
+
     await odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
         dotenv.env['PASS'] ?? "");
     final newData = await odoo.getData(
@@ -36,16 +42,27 @@ class _FakultasPageState extends State<FakultasPage> {
       offset: _offset,
     );
 
+    if (mounted) {
+      setState(() {
+        _loading = false;
+        if (newData.isEmpty) {
+          _allFetched = true;
+        } else {
+          _fakultasData.addAll(newData);
+          _FilteredfakultasData = _fakultasData;
+          _offset += _limit;
+        }
+      });
+    }
+  }
+
+  void _onSearchChanged(String query) {
     setState(() {
-      if (!mounted) return;
-      
-      _loading = false;
-      if (newData.isEmpty) {
-        _allFetched = true;
-      } else {
-        _fakultasData.addAll(newData);
-        _offset += _limit;
-      }
+      _searchQuery = query;
+      _FilteredfakultasData = _fakultasData.where((fakultas) {
+        final name = fakultas["name"].toLowerCase();
+        return name.contains(query.toLowerCase());
+      }).toList();
     });
   }
 
@@ -108,46 +125,145 @@ class _FakultasPageState extends State<FakultasPage> {
       ),
       body: Container(
         color: const Color(0xFFE0F7FA),
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: RefreshIndicator(
-                  onRefresh: _fetchFakultasData,
-                  child: ListView.builder(
-                    itemCount: _fakultasData.length + (_allFetched ? 0 : 1),
-                    itemBuilder: (context, index) {
-                      if (index == _fakultasData.length) {
-                        return null;
-                      }
-                      final fakultas = _fakultasData[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 4,
-                        shadowColor: Colors.orange.withOpacity(0.3),
-                        child: ListTile(
-                          leading: const Icon(Icons.school,
-                              color: Colors.blueAccent),
-                          title: Text(
-                            fakultas["name"] ?? "N/A",
-                            style: const TextStyle(
-                              color: Colors.blueAccent,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(16),
-                          onTap: () {
-                            // Optional: Tambah detail fakultas saat di-tap
-                          },
-                        ),
-                      );
-                    },
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'Cari Fakultas...',
+                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
+            ),
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _FilteredfakultasData.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.info_outline,
+                                  size: 60, color: Colors.orange),
+                              const SizedBox(height: 10),
+                              const Text("Tidak ada data alumni.",
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 4.0),
+                          child: RefreshIndicator(
+                            onRefresh: _fetchFakultasData,
+                            child: ListView.builder(
+                              itemCount: _FilteredfakultasData.length +
+                                  (_allFetched ? 0 : 1),
+                              itemBuilder: (context, index) {
+                                if (index == _FilteredfakultasData.length &&
+                                    !_allFetched) {
+                                  return null;
+                                }
+                                final fakultas = _FilteredfakultasData[index];
+                                return Card(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                  shadowColor: Colors.orange.withOpacity(0.3),
+                                  child: ListTile(
+                                    leading: const Icon(Icons.school,
+                                        color: Colors.orangeAccent),
+                                    title: Text(
+                                      fakultas["name"] ?? "N/A",
+                                      style: const TextStyle(
+                                        color: Colors.orangeAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.all(16),
+                                    trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.orangeAccent),
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor:
+                                                  Colors.white.withOpacity(0.2),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              title: Center(
+                                                  child: Text(
+                                                fakultas["name"] ?? "N/A",
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              )),
+                                              content: Text(
+                                                fakultas["description"] ??
+                                                    "N/A",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                      .withOpacity(0.9),
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              actions: [
+                                                Center(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor: Colors
+                                                          .deepPurple.shade800,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 30,
+                                                          vertical: 18),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      "Back",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                      // Optional: Tambah detail fakultas saat di-tap
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddFakultasModal,
