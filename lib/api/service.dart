@@ -24,8 +24,7 @@ class OdooConnection {
     required List<String> fields, 
     int? limit, 
     int? offset,
-    List<dynamic>? domain,
-    Map<String, dynamic>? args
+    List<dynamic>? domain
     }) async {
     if (_session == null) {
       throw Exception("Not authenticated");
@@ -35,7 +34,7 @@ class OdooConnection {
       return await _odoo.callKw({
         'model': model,
         'method': 'search_read',
-        'args': [args ?? null],
+        'args': [],
         'kwargs': {
           'context': {'bin_size': true},
           'fields': fields,
