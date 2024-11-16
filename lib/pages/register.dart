@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tugas1_ui/pages/login.dart';
 import 'package:tugas1_ui/api/service.dart';
-import 'package:tugas1_ui/pages/splash_screen.dart';
 import 'package:logging/logging.dart';
 
 class RegisterPage extends StatefulWidget {
