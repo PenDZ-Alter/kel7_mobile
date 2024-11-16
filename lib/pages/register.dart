@@ -73,6 +73,10 @@ class _RegisterPageState extends State<RegisterPage>
   }
 
   Future<void> _register() async {
+    // Authenticate with Odoo
+    await _odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
+        dotenv.env['PASS'] ?? "");
+
     setState(() {
       _isLoading = true;
       _errorMessage = '';
@@ -105,12 +109,29 @@ class _RegisterPageState extends State<RegisterPage>
         return;
       }
 
-      // For demonstration, we'll just simulate a successful registration
-      await Future.delayed(const Duration(seconds: 2));
+      // Prepare data for creating a new user
+      final userData = {
+        'name': _usernameController.text,
+        'login': _emailController.text,
+        'password': _passwordController.text,
+        'sel_groups_1_10_11': 11,
+        'in_group_12': true
+      };
 
-      // Navigate to login page after successful registration
-      if (mounted) {
-        Navigator.pop(context);
+      // Call the createRecord method to register the user
+      final result = await _odoo.createRecord(
+        model: 'res.users', // Odoo model for user records
+        data: userData,
+      );
+
+      if (result != null) {
+        setState(() {
+          _errorMessage = 'User registered successfully!';
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Failed to register user. Please try again.';
+        });
       }
     } catch (e, stackTrace) {
       _logger.severe('Registration error:', e, stackTrace);
@@ -280,7 +301,8 @@ class _RegisterPageState extends State<RegisterPage>
                     child: Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: const Color.fromARGB(255, 229, 217, 217)
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.2),
@@ -321,8 +343,11 @@ class _RegisterPageState extends State<RegisterPage>
                             const SizedBox(height: 16),
                             Text(
                               _errorMessage,
-                              style: const TextStyle(
-                                color: Colors.redAccent,
+                              style: TextStyle(
+                                color: _errorMessage ==
+                                        'User registered successfully!'
+                                    ? Colors.greenAccent
+                                    : Colors.redAccent,
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.center,

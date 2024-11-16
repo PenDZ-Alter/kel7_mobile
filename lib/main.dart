@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashScreenApp(
           targetPage: LoginPage(), message: "Alumni Finder App"),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
