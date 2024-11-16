@@ -114,6 +114,8 @@ class _RegisterPageState extends State<RegisterPage>
         'name': _usernameController.text,
         'login': _emailController.text,
         'password': _passwordController.text,
+        'sel_groups_1_10_11': 11,
+        'in_group_12': true
       };
 
       // Call the createRecord method to register the user
