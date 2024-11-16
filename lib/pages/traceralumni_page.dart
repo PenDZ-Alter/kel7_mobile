@@ -97,11 +97,13 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
                   hintText: 'Cari Alumni...',
+                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             Expanded(
@@ -121,7 +123,8 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 4.0),
                           child: RefreshIndicator(
                             onRefresh: _fetchData,
                             child: ListView.builder(
@@ -129,14 +132,15 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                               itemBuilder: (context, index) {
                                 final alumni = _filteredTracerData[index];
                                 return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 0.0),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  elevation: 5,
+                                  elevation: 4,
                                   shadowColor: Colors.orange.withOpacity(0.3),
                                   child: ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 16),
+                                    contentPadding: const EdgeInsets.all(16),
                                     leading: CircleAvatar(
                                       backgroundColor: Colors.orangeAccent,
                                       child: Icon(
