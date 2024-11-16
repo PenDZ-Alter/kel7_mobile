@@ -176,55 +176,87 @@ class _ProdiPageState extends State<ProdiPage> {
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
                   hintText: 'Cari Prodi...',
+                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
             Expanded(
               child: _loading
-                  ? const Center(
-                      child:
-                          CircularProgressIndicator()) // Loading indicator di atas
-                  : RefreshIndicator(
-                      onRefresh: _fetchProdiData,
-                      child: ListView.builder(
-                        itemCount:
-                            _filteredProdiData.length + (_allFetched ? 0 : 1),
-                        itemBuilder: (context, index) {
-                          if (index == _filteredProdiData.length &&
-                              !_allFetched) {
-                            return null;
-                          }
-                          final prodi = _filteredProdiData[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filteredProdiData.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.info_outline,
+                                  size: 60, color: Colors.orange),
+                              const SizedBox(height: 10),
+                              const Text("Tidak ada data alumni.",
+                                  style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        ) // Loading indicator di atas
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 2.0, vertical: 6.0),
+                          child: RefreshIndicator(
+                            onRefresh: _fetchProdiData,
+                            child: ListView.builder(
+                              itemCount: _filteredProdiData.length +
+                                  (_allFetched ? 0 : 1),
+                              itemBuilder: (context, index) {
+                                if (index == _filteredProdiData.length &&
+                                    !_allFetched) {
+                                  return null;
+                                }
+                                final prodi = _filteredProdiData[index];
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                  shadowColor:
+                                      Colors.orangeAccent.withOpacity(0.3),
+                                  child: ListTile(
+                                    title: Text(
+                                      prodi["name"] ?? "N/A",
+                                      style: const TextStyle(
+                                        color: Colors.orangeAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
+                                          style: const TextStyle(
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                    contentPadding: const EdgeInsets.all(16),
+                                    trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.orangeAccent),
+                                    onTap: () {
+                                      // Implement action when an alumni item is tapped
+                                    },
+                                  ),
+                                );
+                              },
                             ),
-                            elevation: 4,
-                            shadowColor: Colors.orangeAccent.withOpacity(0.3),
-                            child: ListTile(
-                              title: Text(
-                                prodi["name"] ?? "N/A",
-                                style: const TextStyle(
-                                  color: Colors.orangeAccent,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
-                                style: const TextStyle(color: Colors.black54),
-                              ),
-                              contentPadding: const EdgeInsets.all(16),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        ),
             ),
           ],
         ),
