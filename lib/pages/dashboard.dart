@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'fakultas_page.dart';
 import 'prodi_page.dart';
 import 'traceralumni_page.dart';
-import 'login.dart';
-import 'splash_screen.dart';
+import 'auth/login.dart';
+import 'splash/splash_screen.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});

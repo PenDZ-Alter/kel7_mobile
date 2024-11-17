@@ -136,6 +136,93 @@ class _ProdiPageState extends State<ProdiPage> {
     return "Unknown Fakultas";
   }
 
+  void _deleteProdi(int recordId, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Hapus"),
+          content: const Text("Apakah anda yakin ingin menghapus prodi ini?"),
+          actions: [
+            TextButton(
+              child: const Text("Batal"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  final success = await odoo.deleteRecord(
+                    model: 'annas.prodi',
+                    recordIds: [recordId],
+                  );
+                  if (success) {
+                    setState(() {
+                      _prodiData.removeAt(index);
+                      _filteredProdiData = _prodiData;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Prodi berhasil dihapus")),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Gagal menghapus prodi: $e")),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _editProdi(Map<String, dynamic> prodi, int index) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return ProdiFormModal(
+          fakultasData: _fakultasData,
+          initialData: prodi,
+          onSubmit: (updatedProdi) async {
+            try {
+              final success = await odoo.updateRecord(
+                model: 'annas.prodi',
+                recordId: prodi['id'],
+                data: updatedProdi,
+              );
+              if (success) {
+                setState(() {
+                  _prodiData[index] = {...prodi, ...updatedProdi};
+                  _filteredProdiData = _prodiData;
+                });
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Prodi berhasil diperbarui")),
+                  );
+                }
+              }
+            } catch (e) {
+              print("Error updating record: $e");
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Gagal memperbarui prodi: $e")),
+                );
+              }
+            }
+          },
+        );
+      },
+    );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,33 +312,38 @@ class _ProdiPageState extends State<ProdiPage> {
                                   shadowColor:
                                       Colors.orangeAccent.withOpacity(0.3),
                                   child: ListTile(
-                                    title: Text(
-                                      prodi["name"] ?? "N/A",
-                                      style: const TextStyle(
-                                        color: Colors.orangeAccent,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
-                                          style: const TextStyle(
-                                              color: Colors.black54),
+                                          title: Text(
+                                            prodi["name"] ?? "N/A",
+                                            style: const TextStyle(
+                                              color: Colors.orangeAccent,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
+                                                style: const TextStyle(color: Colors.black54),
+                                              ),
+                                            ],
+                                          ),
+                                          contentPadding: const EdgeInsets.all(16),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                                onPressed: () => _editProdi(prodi, index),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete, color: Colors.red),
+                                                onPressed: () => _deleteProdi(prodi['id'], index),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                    contentPadding: const EdgeInsets.all(16),
-                                    trailing: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.orangeAccent),
-                                    onTap: () {
-                                      // Implement action when an alumni item is tapped
-                                    },
-                                  ),
                                 );
                               },
                             ),
@@ -273,17 +365,21 @@ class _ProdiPageState extends State<ProdiPage> {
 class ProdiFormModal extends StatefulWidget {
   final List<dynamic> fakultasData;
   final Function(Map<String, dynamic>) onSubmit;
+  final Map<String, dynamic>? initialData;
 
-  const ProdiFormModal(
-      {required this.fakultasData, required this.onSubmit, Key? key})
-      : super(key: key);
+  const ProdiFormModal({
+    required this.fakultasData,
+    required this.onSubmit,
+    this.initialData,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ProdiFormModalState createState() => _ProdiFormModalState();
 }
 
 class _ProdiFormModalState extends State<ProdiFormModal> {
-  final TextEditingController _nameController = TextEditingController();
+ final TextEditingController _nameController = TextEditingController();
   final TextEditingController _kodeProdiController = TextEditingController();
   final TextEditingController _kaprodiController = TextEditingController();
   int? _selectedFakultasId;
@@ -291,13 +387,26 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
   bool _isKodeProdiValid = true;
   bool _isKaprodiValid = true;
 
-  // @override
-  // void dispose() {
-  //   _nameController.dispose();
-  //   _kodeProdiController.dispose();
-  //   _kaprodiController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialData != null) {
+      _nameController.text = widget.initialData!['name'] ?? '';
+      _kodeProdiController.text = widget.initialData!['kode_prodi'] ?? '';
+      _kaprodiController.text = widget.initialData!['kaprodi'] ?? '';
+      _selectedFakultasId = widget.initialData!['fakultas_id'] is List 
+          ? widget.initialData!['fakultas_id'][0]
+          : widget.initialData!['fakultas_id'];
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _kodeProdiController.dispose();
+    _kaprodiController.dispose();
+    super.dispose();
+  }
 
   void _submit() {
     setState(() {
@@ -430,3 +539,4 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
     );
   }
 }
+
