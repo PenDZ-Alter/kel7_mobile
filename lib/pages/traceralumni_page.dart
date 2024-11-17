@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugas1_ui/api/service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tugas1_ui/pages/form_tracer.dart';
+import 'package:tugas1_ui/pages/forms/form_tracer.dart';
 
 class TracerAlumniPage extends StatefulWidget {
   const TracerAlumniPage({super.key});
@@ -31,7 +31,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
           dotenv.env['PASS'] ?? "");
       _traceralumniData = await odoo.getData(
         model: 'annas.traceralumni',
-        fields: ["name", "nim", "tahun", "email", "status"],
+        fields: ['name', 'nim', 'tahun', 'email', 'nomor', 'alamat', 'fakultas', 'prodi', 'status'],
       );
       _filteredTracerData =
           List.from(_traceralumniData); // Salin data awal ke filtered data

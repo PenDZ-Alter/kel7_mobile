@@ -92,9 +92,43 @@ class _FakultasPageState extends State<FakultasPage> {
               setState(() {
                 _fakultasData.insert(0, newFakultas);
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Fakultas berhasil ditambahkan")),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Fakultas berhasil ditambahkan")),
+                );
+              }
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _openEditFakultasModal(String? id, String? name) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return FakultasFormModal(
+          initialData: {"id": id, "name": name},
+          onSubmit: (data) async {
+            final response = await odoo.updateRecord(
+              model: "annas.fakultas",
+              recordId: int.parse(data['id']),
+              data: {"name": data['name']},
+            );
+            if (response != null) {
+              // setState(() {
+              //   _fakultasData.insert(0, data);
+              // });
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Fakultas berhasil diedit")),
+                );
+              }
             }
           },
         );
@@ -188,296 +222,81 @@ class _FakultasPageState extends State<FakultasPage> {
                                   ),
                                   elevation: 4,
                                   shadowColor: Colors.orange.withOpacity(0.3),
-                                  child: ListTile(
-                                    leading: const Icon(Icons.school,
-                                        color: Colors.orangeAccent),
-                                    title: Text(
-                                      fakultas["name"] ?? "N/A",
-                                      style: const TextStyle(
-                                        color: Colors.orangeAccent,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.school,
+                                            color: Colors.orangeAccent),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Text(
+                                            fakultas["name"] ?? "N/A",
+                                            style: const TextStyle(
+                                              color: Colors.orangeAccent,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.blue),
+                                          onPressed: () =>
+                                              _openEditFakultasModal(
+                                                  fakultas['id'].toString(),
+                                                  fakultas['name']),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title:
+                                                      const Text("Konfirmasi"),
+                                                  content: Text(
+                                                      "Apakah anda yakin ingin menghapus data ${fakultas["name"]}?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child:
+                                                          const Text("Batal"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        setState(() {
+                                                          _FilteredfakultasData
+                                                              .remove(fakultas);
+                                                        });
+                                                        await deleteData(fakultas['id']);
+                                                        await _fetchFakultasData();
+                                                        if (context.mounted) {
+                                                          ScaffoldMessenger.of(context)
+                                                            .showSnackBar(
+                                                              const SnackBar(
+                                                                content: Text("Data berhasil dihapus")
+                                                              ),
+                                                          );
+                                                        }
+                                                      },
+                                                      style: TextButton.styleFrom(foregroundColor:Colors.red),
+                                                      child: const Text("Hapus"),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    contentPadding: const EdgeInsets.all(16),
-                                    trailing: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.orangeAccent),
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.2),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            title: Center(
-                                              child: Text(
-                                                "Detail Data " +
-                                                    fakultas["name"],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            content: Text(
-                                              "Disini, anda dapat memodifikasi dari data " +
-                                                  fakultas["name"] +
-                                                  " disini!",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white
-                                                    .withOpacity(0.9),
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            actions: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  // button edit
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Tutup dialog saat ini
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title: Text(
-                                                                "Edit Data"),
-                                                            content: Text(
-                                                                "Fungsi Edit Data akan ditambahkan."),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(),
-                                                                child:
-                                                                    Text("OK"),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    // style button edit
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.blue,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 12),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      "Edit",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Tutup dialog saat ini
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                                Colors.white
-                                                                    .withOpacity(
-                                                                        0.2),
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            16)),
-                                                            title: Text(
-                                                              "Hapus Data",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            content: Text(
-                                                              "Apakah anda yakin ingin menghapus data " +
-                                                                  fakultas[
-                                                                      "name"] +
-                                                                  " ini?",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            actions: [
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                children: [
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(); // Tutup dialog konfirmasi
-                                                                      setState(
-                                                                          () {
-                                                                        _FilteredfakultasData.remove(
-                                                                            fakultas); // Hapus item dari daftar lokal
-                                                                      });
-
-                                                                      await deleteData(
-                                                                          fakultas[
-                                                                              'id']);
-
-                                                                      // Reload data dari server
-                                                                      await _fetchFakultasData();
-
-                                                                      ScaffoldMessenger.of(
-                                                                              context)
-                                                                          .showSnackBar(
-                                                                        const SnackBar(
-                                                                            content:
-                                                                                Text("Data berhasil dihapus")),
-                                                                      );
-                                                                    },
-                                                                    style: TextButton
-                                                                        .styleFrom(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .redAccent,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              20,
-                                                                          vertical:
-                                                                              12),
-                                                                      shape:
-                                                                          RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                    ),
-                                                                    child:
-                                                                        const Text(
-                                                                      "OK",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    },
-                                                                    // style button edit
-                                                                    style: TextButton
-                                                                        .styleFrom(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .blueAccent,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              20,
-                                                                          vertical:
-                                                                              12),
-                                                                      shape:
-                                                                          RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                    ),
-                                                                    child:
-                                                                        const Text(
-                                                                      "NO",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.red,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 12),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      "Hapus",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Tetap berfungsi sebagai tombol back
-                                                    },
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor: Colors
-                                                          .deepPurple.shade800,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 12),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      "Back",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
                                   ),
                                 );
                               },
@@ -488,6 +307,7 @@ class _FakultasPageState extends State<FakultasPage> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddFakultasModal,
         child: const Icon(Icons.add),
@@ -499,8 +319,10 @@ class _FakultasPageState extends State<FakultasPage> {
 
 class FakultasFormModal extends StatefulWidget {
   final Function(Map<String, dynamic>) onSubmit;
+  final Map<String, dynamic>? initialData; // Optional parameter for edit mode
 
-  const FakultasFormModal({required this.onSubmit, Key? key}) : super(key: key);
+  const FakultasFormModal({required this.onSubmit, this.initialData, Key? key})
+      : super(key: key);
 
   @override
   _FakultasFormModalState createState() => _FakultasFormModalState();
@@ -509,6 +331,15 @@ class FakultasFormModal extends StatefulWidget {
 class _FakultasFormModalState extends State<FakultasFormModal> {
   final TextEditingController _nameController = TextEditingController();
   bool _isNameValid = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate the controller with initial data for editing
+    if (widget.initialData != null) {
+      _nameController.text = widget.initialData!['name'] ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -523,16 +354,22 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
       });
       return;
     }
-    final newFakultas = {"name": _nameController.text};
-    widget.onSubmit(newFakultas);
+
+    final updatedFakultas = {"name": _nameController.text};
+
+    // Include the ID if editing an existing record
+    if (widget.initialData != null) {
+      updatedFakultas['id'] = widget.initialData!['id'].toString();
+    }
+
+    widget.onSubmit(updatedFakultas);
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      type:
-          MaterialType.transparency, // Material widget untuk menghindari error
+      type: MaterialType.transparency,
       child: FractionallySizedBox(
         heightFactor: 0.3,
         child: Container(
@@ -551,9 +388,11 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Tambah Fakultas",
-                style: TextStyle(
+              Text(
+                widget.initialData == null
+                    ? "Tambah Fakultas"
+                    : "Edit Fakultas",
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.orangeAccent,
@@ -594,9 +433,10 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
                   backgroundColor: Colors.orangeAccent,
                   elevation: 5,
                 ),
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  widget.initialData == null ? "Submit" : "Update",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
