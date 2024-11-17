@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tugas1_ui/pages/login.dart';
+import 'package:tugas1_ui/pages/dashboard.dart';
+import 'package:tugas1_ui/pages/auth/register.dart';
 import 'package:tugas1_ui/api/service.dart';
+import 'package:tugas1_ui/pages/splash/splash_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logging/logging.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage>
+class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
   bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _rememberMe = false;
   String _errorMessage = '';
 
   // Animation controllers
@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage>
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
 
-  final _logger = Logger('RegisterPage');
+  final _logger = Logger('LoginPage');
   late final OdooConnection _odoo;
 
   @override
@@ -59,84 +59,75 @@ class _RegisterPageState extends State<RegisterPage>
     );
 
     _animationController.forward();
+    _loadRememberMeState();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _register() async {
-    // Authenticate with Odoo
-    await _odoo.auth(dotenv.env['DB'] ?? "", dotenv.env['USER'] ?? "",
-        dotenv.env['PASS'] ?? "");
+  Future<void> _loadRememberMeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+      if (_rememberMe) {
+        _usernameController.text = prefs.getString('username') ?? '';
+        _passwordController.text = prefs.getString('password') ?? '';
+      }
+    });
+  }
 
+  Future<void> _saveRememberMeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', _rememberMe);
+    await prefs.setString('username', _usernameController.text);
+    await prefs.setString('password', _passwordController.text);
+  }
+
+  Future<void> _login() async {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
 
     try {
-      // Basic validation
-      if (_usernameController.text.isEmpty ||
-          _emailController.text.isEmpty ||
-          _passwordController.text.isEmpty ||
-          _confirmPasswordController.text.isEmpty) {
+      final dbName = dotenv.env['DB']!;
+      final user = _usernameController.text.trim();
+      final pass = _passwordController.text.trim();
+
+      if (user.isEmpty || pass.isEmpty) {
         setState(() {
           _errorMessage = 'Please fill in all fields';
         });
         return;
       }
 
-      if (_passwordController.text != _confirmPasswordController.text) {
-        setState(() {
-          _errorMessage = 'Passwords do not match';
-        });
-        return;
-      }
-
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-          .hasMatch(_emailController.text)) {
-        setState(() {
-          _errorMessage = 'Please enter a valid email address';
-        });
-        return;
-      }
-
-      // Prepare data for creating a new user
-      final userData = {
-        'name': _usernameController.text,
-        'login': _emailController.text,
-        'password': _passwordController.text,
-        'sel_groups_1_10_11': 11,
-        'in_group_12': true
-      };
-
-      // Call the createRecord method to register the user
-      final result = await _odoo.createRecord(
-        model: 'res.users', // Odoo model for user records
-        data: userData,
-      );
-
-      if (result != null) {
-        setState(() {
-          _errorMessage = 'User registered successfully!';
-        });
+      final session = await _odoo.auth(dbName, user, pass);
+      if (session != null) {
+        if (_rememberMe) {
+          await _saveRememberMeState();
+        }
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SplashScreen(
+                targetPage: Dashboard(),
+                message: "Logging in ...",
+              ),
+            ),
+            (routes) => false);
       } else {
         setState(() {
-          _errorMessage = 'Failed to register user. Please try again.';
+          _errorMessage = 'Invalid username or password.';
         });
+        _logger.warning('Login failed: Invalid username or password');
       }
     } catch (e, stackTrace) {
-      _logger.severe('Registration error:', e, stackTrace);
+      _logger.severe('Login error:', e, stackTrace);
       setState(() {
-        _errorMessage =
-            'An error occurred during registration. Please try again.';
+        _errorMessage = 'An error occurred. Please try again.';
       });
     } finally {
       setState(() {
@@ -145,7 +136,111 @@ class _RegisterPageState extends State<RegisterPage>
     }
   }
 
-  Future<void> _showLoginConfirmation() async {
+  Future<void> _showNotReadyGoogle() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Center(
+              child: Text(
+            "Google",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          )),
+          content: Text(
+            "This feature is not ready yet, make sure to contact our Customer Support for more help",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 14,
+            ),
+          ),
+          actions: [
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.deepPurple.shade800,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  "Back",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showNotReadyFacebook() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Center(
+              child: Text(
+            "Facebook",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          )),
+          content: Text(
+            "This feature is not ready yet, make sure to contact our Customer Support for more help",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 14,
+            ),
+          ),
+          actions: [
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.deepPurple.shade800,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  "Back",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _googleSignIn() async {
+    await _showNotReadyGoogle();
+  }
+
+  Future<void> _facebookSignIn() async {
+    await _showNotReadyFacebook();
+  }
+
+  Future<void> _showRegisterConfirmation() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -178,12 +273,12 @@ class _RegisterPageState extends State<RegisterPage>
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close dialog
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                        (routes) => false);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
+                    );
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.deepPurple.shade800,
@@ -248,7 +343,7 @@ class _RegisterPageState extends State<RegisterPage>
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 60),
                   // Logo and Welcome Text
                   FadeTransition(
                     opacity: _fadeAnimation,
@@ -261,14 +356,14 @@ class _RegisterPageState extends State<RegisterPage>
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
-                            Icons.person_add,
+                            Icons.school,
                             size: 80,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          "Create Account",
+                          "Welcome Back",
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -284,7 +379,7 @@ class _RegisterPageState extends State<RegisterPage>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Join our community",
+                          "Sign in to continue",
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white.withOpacity(0.8),
@@ -293,15 +388,14 @@ class _RegisterPageState extends State<RegisterPage>
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  // Registration Form
+                  const SizedBox(height: 48),
+                  // Login Form
                   SlideTransition(
                     position: _slideAnimation,
                     child: Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 229, 217, 217)
-                            .withOpacity(0.1),
+                        color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.2),
@@ -310,73 +404,96 @@ class _RegisterPageState extends State<RegisterPage>
                       ),
                       child: Column(
                         children: [
+                          // Username Field
                           _buildTextField(
                             controller: _usernameController,
                             icon: Icons.person_outline,
                             label: 'Username',
                           ),
                           const SizedBox(height: 20),
-                          _buildTextField(
-                            controller: _emailController,
-                            icon: Icons.email_outlined,
-                            label: 'Email',
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          const SizedBox(height: 20),
+                          // Password Field
                           _buildTextField(
                             controller: _passwordController,
                             icon: Icons.lock_outline,
                             label: 'Password',
                             isPassword: true,
-                            isConfirmPassword: false,
                           ),
-                          const SizedBox(height: 20),
-                          _buildTextField(
-                            controller: _confirmPasswordController,
-                            icon: Icons.lock_outline,
-                            label: 'Confirm Password',
-                            isPassword: true,
-                            isConfirmPassword: true,
-                          ),
+                          const SizedBox(height: 16),
+                          // Remember Me
+                          _buildRememberMe(),
                           if (_errorMessage.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             Text(
                               _errorMessage,
-                              style: TextStyle(
-                                color: _errorMessage ==
-                                        'User registered successfully!'
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
                                 fontSize: 14,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ],
                           const SizedBox(height: 24),
-                          _buildRegisterButton(),
+                          // Login Button
+                          _buildLoginButton(),
                         ],
                       ),
                     ),
                   ),
+                  const SizedBox(height: 32),
+                  // Social Login
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Or continue with",
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildSocialButton(
+                              icon: Icons.g_mobiledata,
+                              label: 'Google',
+                              onPressed: _googleSignIn,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black87,
+                            ),
+                            const SizedBox(width: 16),
+                            _buildSocialButton(
+                              icon: Icons.facebook,
+                              label: 'Facebook',
+                              onPressed: _facebookSignIn,
+                              backgroundColor: const Color(0xFF3B5998),
+                              textColor: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 24),
-                  // Login Link
+                  // Register Link
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Already have an account? ",
+                          "Don't have an account? ",
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.8),
                           ),
                         ),
                         TextButton(
                           onPressed: () {
-                            _showLoginConfirmation();
+                            _showRegisterConfirmation();
                           },
                           child: const Text(
-                            'Sign In',
+                            'Register',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -401,8 +518,6 @@ class _RegisterPageState extends State<RegisterPage>
     required IconData icon,
     required String label,
     bool isPassword = false,
-    bool isConfirmPassword = false,
-    TextInputType? keyboardType,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -411,11 +526,7 @@ class _RegisterPageState extends State<RegisterPage>
       ),
       child: TextField(
         controller: controller,
-        obscureText: isPassword &&
-            (isConfirmPassword
-                ? !_isConfirmPasswordVisible
-                : !_isPasswordVisible),
-        keyboardType: keyboardType,
+        obscureText: isPassword && !_isPasswordVisible,
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
@@ -424,22 +535,14 @@ class _RegisterPageState extends State<RegisterPage>
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    isConfirmPassword
-                        ? (_isConfirmPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off)
-                        : (_isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off),
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Colors.white.withOpacity(0.8),
                   ),
                   onPressed: () {
                     setState(() {
-                      if (isConfirmPassword) {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      } else {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      }
+                      _isPasswordVisible = !_isPasswordVisible;
                     });
                   },
                 )
@@ -461,12 +564,46 @@ class _RegisterPageState extends State<RegisterPage>
     );
   }
 
-  Widget _buildRegisterButton() {
+  Widget _buildRememberMe() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 24,
+          width: 24,
+          child: Checkbox(
+            value: _rememberMe,
+            onChanged: (value) {
+              setState(() {
+                _rememberMe = value ?? false;
+              });
+            },
+            fillColor: MaterialStateProperty.resolveWith(
+              (states) => states.contains(MaterialState.selected)
+                  ? Colors.white
+                  : Colors.transparent,
+            ),
+            checkColor: Colors.deepPurple,
+            side: BorderSide(color: Colors.white.withOpacity(0.8)),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Remember Me',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoginButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _register,
+        onPressed: _isLoading ? null : _login,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           foregroundColor: Colors.deepPurple,
@@ -485,13 +622,35 @@ class _RegisterPageState extends State<RegisterPage>
                 ),
               )
             : const Text(
-                'Create Account',
+                'Sign In',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
       ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required Color backgroundColor,
+    required Color textColor,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      icon: Icon(icon),
+      label: Text(label),
     );
   }
 }

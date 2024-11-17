@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tugas1_ui/pages/login.dart';
-import 'package:tugas1_ui/pages/splash_screen_app.dart';
+import 'package:tugas1_ui/pages/auth/login.dart';
+import 'package:tugas1_ui/pages/splash/splash_screen_app.dart';
 import 'dart:io' show Platform;
 import 'package:window_size/window_size.dart';
 
