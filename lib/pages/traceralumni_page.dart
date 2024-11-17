@@ -31,7 +31,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
           dotenv.env['PASS'] ?? "");
       _traceralumniData = await odoo.getData(
         model: 'annas.traceralumni',
-        fields: ["name", "nim", "tahun", "email", "status"],
+        fields: ['name', 'nim', 'tahun', 'email', 'nomor', 'alamat', 'fakultas', 'prodi', 'status'],
       );
       _filteredTracerData =
           List.from(_traceralumniData); // Salin data awal ke filtered data
