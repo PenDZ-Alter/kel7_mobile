@@ -158,18 +158,22 @@ class _ProdiPageState extends State<ProdiPage> {
                     recordIds: [recordId],
                   );
                   if (success) {
-                    setState(() {
-                      _prodiData.removeAt(index);
-                      _filteredProdiData = _prodiData;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Prodi berhasil dihapus")),
-                    );
+                    if (mounted) {
+                      setState(() {
+                        _prodiData.removeAt(index);
+                        _filteredProdiData = _prodiData;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Prodi berhasil dihapus")),
+                      );
+                    }
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Gagal menghapus prodi: $e")),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Gagal menghapus prodi: $e")),
+                    );
+                  }
                 }
               },
             ),
