@@ -155,6 +155,19 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
     });
   }
 
+  void _showEditTracerAlumniForm(BuildContext context, dynamic alumni) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FormTracer(
+          odoo: odoo,
+          alumni: alumni, // Kirim data alumni untuk diedit
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,8 +328,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                                                   // Tombol Edit
                                                   TextButton(
                                                     onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Tutup dialog
+                                                      _showEditTracerAlumniForm(context, alumni);
                                                     },
                                                     style: TextButton.styleFrom(
                                                       backgroundColor:
