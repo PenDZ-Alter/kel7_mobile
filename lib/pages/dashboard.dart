@@ -46,7 +46,7 @@ class Dashboard extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => const SplashScreen(
                           targetPage: LoginPage(),
-                          message: "Logging out ...",
+                          message: "Keluar dulu ...",
                           isRevert: true,
                         )),
               );

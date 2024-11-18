@@ -141,10 +141,14 @@ class _FormTracerState extends State<FormTracer> {
             children: [
               _buildTextField(_nameController, 'Nama', Icons.person),
               _buildTextField(_nimController, 'NIM', Icons.badge),
+              const SizedBox(height: 10.0),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Tahun Lulus',
                   prefixIcon: Icon(Icons.calendar_today),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 items: List.generate(
                   27,
@@ -158,13 +162,18 @@ class _FormTracerState extends State<FormTracer> {
                 validator: (value) =>
                     value == null ? 'Tahun lulus harus dipilih' : null,
               ),
+              const SizedBox(height: 5.0),
               _buildTextField(_emailController, 'Email Aktif', Icons.email),
               _buildTextField(_nomorController, 'Nomor Telepon', Icons.phone),
               _buildTextField(_alamatController, 'Alamat Rumah', Icons.home),
+              const SizedBox(height: 5.0),
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Fakultas',
                   prefixIcon: Icon(Icons.school),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 items: _fakultasData.map<DropdownMenuItem<int>>((fakultas) {
                   return DropdownMenuItem<int>(
@@ -181,13 +190,17 @@ class _FormTracerState extends State<FormTracer> {
                 validator: (value) =>
                     value == null ? 'Fakultas harus dipilih' : null,
               ),
+              const SizedBox(height: 15.0),
               if (_prodiLoading)
                 const Center(child: CircularProgressIndicator())
               else
                 DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Program Studi',
                     prefixIcon: Icon(Icons.book),
+                    border: OutlineInputBorder(
+                    borderRadius:  BorderRadius.circular(8.0),
+                  ),
                   ),
                   items: _prodiData.map<DropdownMenuItem<int>>((prodi) {
                     return DropdownMenuItem<int>(
@@ -199,10 +212,14 @@ class _FormTracerState extends State<FormTracer> {
                   validator: (value) =>
                       value == null ? 'Program studi harus dipilih' : null,
                 ),
+                const SizedBox(height: 15.0),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Status Anda saat ini',
                   prefixIcon: Icon(Icons.work),
+                  border: OutlineInputBorder(
+                    borderRadius:  BorderRadius.circular(8.0),
+                  ),
                 ),
                 items: const [
                   DropdownMenuItem(
