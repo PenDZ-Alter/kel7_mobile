@@ -52,6 +52,92 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
     }
   }
 
+  Future<void> _deleteTracer(int recordId, int index) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            "Konfirmasi Hapus",
+            style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            "Apakah anda yakin ingin menghapus data alumni ini?",
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Text(
+                    "Batal",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  child: const Text("Hapus",
+                      style: TextStyle(color: Colors.white)),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    try {
+                      final success = await odoo.deleteRecord(
+                        model: 'annas.traceralumni',
+                        recordIds: [recordId],
+                      );
+                      if (success) {
+                        if (mounted) {
+                          setState(() {
+                            _traceralumniData.removeAt(index);
+                            _filteredTracerData = _traceralumniData;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Data alumni berhasil dihapus")),
+                          );
+                        }
+                      } else {
+                        print("Failed when deleting data!");
+                      }
+                    } catch (e) {
+                      print("Failed when deleting data : $e");
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Gagal menghapus alumni: $e")),
+                        );
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showAddTracerAlumniForm(BuildContext context) {
     Navigator.push(
       context,
@@ -68,6 +154,19 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
       }).toList();
     });
   }
+
+  void _showEditTracerAlumniForm(BuildContext context, dynamic alumni) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FormTracer(
+          odoo: odoo,
+          alumni: alumni, // Kirim data alumni untuk diedit
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -194,131 +293,123 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                                         color: Colors.orangeAccent),
                                     onTap: () {
                                       showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              backgroundColor:
-                                                  Colors.white.withOpacity(0.2),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          16)),
-                                              title: Text(
-                                                "Detail Data $nama",
-                                                style: TextStyle(
-                                                    color: Colors.orangeAccent,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                textAlign: TextAlign.center,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            backgroundColor:
+                                                Colors.white.withOpacity(0.2),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16)),
+                                            title: Text(
+                                              "Detail Data $nama",
+                                              style: TextStyle(
+                                                  color: Colors.orangeAccent,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            content: Text(
+                                              "Mahasiswa $nama dengan NIM $NIM" +
+                                                  "\nTelah lulus dari Universitas UIN Maulana Malik Ibrahim Malang pada tahun " +
+                                                  "$Tahun" +
+                                                  "\nYang dimana sekarang dia sedang menjalani " +
+                                                  "$tatus",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            actions: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  // Tombol Edit
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      _showEditTracerAlumniForm(context, alumni);
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.blueAccent,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 12),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      "Edit",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                  // Tombol Delete
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      await _deleteTracer(
+                                                          alumni['id'], index);
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.redAccent,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 12),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      "Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                  // Tombol Back
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Tutup dialog
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.deepPurple,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 12),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    child: const Text(
+                                                      "Back",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              content: Text(
-                                                "Mahasiswa $nama dengan NIM $NIM" +
-                                                    "\nTelah lulus dari Universitas UIN Maulana Malik Ibrahim Malang pada tahun " +
-                                                    "$Tahun" +
-                                                    "\nDimana sekarang sedang " +
-                                                    "$tatus",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              actions: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop;
-                                                        },
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .blueAccent,
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        20,
-                                                                    vertical:
-                                                                        12),
-                                                                shape:
-                                                                    RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                )),
-                                                        child: const Text(
-                                                            "Edit",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white))),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop;
-                                                        },
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .redAccent,
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        20,
-                                                                    vertical:
-                                                                        12),
-                                                                shape:
-                                                                    RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                )),
-                                                        child: const Text(
-                                                          "Delete",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        )),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop;
-                                                        },
-                                                        style: TextButton
-                                                            .styleFrom(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .deepPurple,
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        20,
-                                                                    vertical:
-                                                                        12),
-                                                                shape:
-                                                                    RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                )),
-                                                        child: const Text(
-                                                          "Back",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ))
-                                                  ],
-                                                ),
-                                              ],
-                                            );
-                                          });
+                                            ],
+                                          );
+                                        },
+                                      );
                                     },
                                   ),
                                 );

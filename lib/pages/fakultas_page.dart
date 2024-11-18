@@ -539,6 +539,7 @@ class _FakultasFormModalState extends State<FakultasFormModal> {
                     onPressed: () {
                       Navigator.of(context).pop(); // Close the dialog
                       _submit();
+                      
                     }, // Proceed with update
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,

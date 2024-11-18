@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage>
             MaterialPageRoute(
               builder: (context) => const SplashScreen(
                 targetPage: Dashboard(),
-                message: "Logging in ...",
+                message: "Tunggu Dulu yah ...",
               ),
             ),
             (routes) => false);
