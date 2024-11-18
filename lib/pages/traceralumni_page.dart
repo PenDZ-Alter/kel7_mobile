@@ -31,7 +31,17 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
           dotenv.env['PASS'] ?? "");
       _traceralumniData = await odoo.getData(
         model: 'annas.traceralumni',
-        fields: ['name', 'nim', 'tahun', 'email', 'nomor', 'alamat', 'fakultas', 'prodi', 'status'],
+        fields: [
+          'name',
+          'nim',
+          'tahun',
+          'email',
+          'nomor',
+          'alamat',
+          'fakultas',
+          'prodi',
+          'status'
+        ],
       );
       _filteredTracerData =
           List.from(_traceralumniData); // Salin data awal ke filtered data
@@ -48,10 +58,6 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
       MaterialPageRoute(builder: (context) => FormTracer(odoo: odoo)),
     );
   }
-
-  // void _showSearch() {
-  //   showSearch(context: context, delegate: AlumniSearch(_traceralumniData));
-  // }
 
   void _onSearchChanged(String query) {
     setState(() {
@@ -132,6 +138,14 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                               itemCount: _filteredTracerData.length,
                               itemBuilder: (context, index) {
                                 final alumni = _filteredTracerData[index];
+                                String nama =
+                                    _filteredTracerData[index]['name'];
+                                String NIM = _filteredTracerData[index]['nim'];
+                                String Tahun =
+                                    _filteredTracerData[index]['tahun'];
+                                String tatus =
+                                    _filteredTracerData[index]['status'];
+
                                 return Card(
                                   margin: const EdgeInsets.symmetric(
                                       vertical: 8.0, horizontal: 0.0),
@@ -179,7 +193,132 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                                         Icons.arrow_forward_ios,
                                         color: Colors.orangeAccent),
                                     onTap: () {
-                                      // Implement action when an alumni item is tapped
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor:
+                                                  Colors.white.withOpacity(0.2),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16)),
+                                              title: Text(
+                                                "Detail Data $nama",
+                                                style: TextStyle(
+                                                    color: Colors.orangeAccent,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              content: Text(
+                                                "Mahasiswa $nama dengan NIM $NIM" +
+                                                    "\nTelah lulus dari Universitas UIN Maulana Malik Ibrahim Malang pada tahun " +
+                                                    "$Tahun" +
+                                                    "\nDimana sekarang sedang " +
+                                                    "$tatus",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              actions: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop;
+                                                        },
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .blueAccent,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        12),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                )),
+                                                        child: const Text(
+                                                            "Edit",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white))),
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop;
+                                                        },
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .redAccent,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        12),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                )),
+                                                        child: const Text(
+                                                          "Delete",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        )),
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop;
+                                                        },
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .deepPurple,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        12),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                )),
+                                                        child: const Text(
+                                                          "Back",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ))
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          });
                                     },
                                   ),
                                 );

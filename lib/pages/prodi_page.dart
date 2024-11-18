@@ -102,11 +102,10 @@ class _ProdiPageState extends State<ProdiPage> {
                 // Wait briefly to allow UI to stabilize
                 await Future.delayed(const Duration(milliseconds: 300));
                 if (mounted)
-                  Navigator.of(_scaffoldKey.currentContext!)
-                      .pop(); // Close the modal after updating
-                ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
-                  const SnackBar(content: Text("Prodi berhasil ditambahkan")),
-                );
+                  ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+                      .showSnackBar(
+                    SnackBar(content: Text("Prodi berhasil ditambahkan")),
+                  );
               }
             } catch (e) {
               print("Error creating record : $e");
@@ -141,8 +140,18 @@ class _ProdiPageState extends State<ProdiPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Konfirmasi Hapus"),
-          content: const Text("Apakah anda yakin ingin menghapus prodi ini?"),
+          backgroundColor: Colors.white.withOpacity(0.2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            "Konfirmasi Hapus",
+            style: TextStyle(color: Colors.orangeAccent),
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            "Apakah anda yakin ingin menghapus prodi ini?",
+            style: TextStyle(color: Colors.white),
+          ),
           actions: [
             TextButton(
               child: const Text("Batal"),
@@ -225,7 +234,7 @@ class _ProdiPageState extends State<ProdiPage> {
         );
       },
     );
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,38 +325,44 @@ class _ProdiPageState extends State<ProdiPage> {
                                   shadowColor:
                                       Colors.orangeAccent.withOpacity(0.3),
                                   child: ListTile(
-                                          title: Text(
-                                            prodi["name"] ?? "N/A",
-                                            style: const TextStyle(
-                                              color: Colors.orangeAccent,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          subtitle: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
-                                                style: const TextStyle(color: Colors.black54),
-                                              ),
-                                            ],
-                                          ),
-                                          contentPadding: const EdgeInsets.all(16),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                                onPressed: () => _editProdi(prodi, index),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.delete, color: Colors.red),
-                                                onPressed: () => _deleteProdi(prodi['id'], index),
-                                              ),
-                                            ],
-                                          ),
+                                    title: Text(
+                                      prodi["name"] ?? "N/A",
+                                      style: const TextStyle(
+                                        color: Colors.orangeAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "Fakultas: ${_getFakultasName(prodi["fakultas_id"])}\nKaprodi: ${prodi["kaprodi"]}",
+                                          style: const TextStyle(
+                                              color: Colors.black54),
                                         ),
+                                      ],
+                                    ),
+                                    contentPadding: const EdgeInsets.all(16),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.blue),
+                                          onPressed: () =>
+                                              _editProdi(prodi, index),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () =>
+                                              _deleteProdi(prodi['id'], index),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 );
                               },
                             ),
@@ -383,7 +398,7 @@ class ProdiFormModal extends StatefulWidget {
 }
 
 class _ProdiFormModalState extends State<ProdiFormModal> {
- final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _kodeProdiController = TextEditingController();
   final TextEditingController _kaprodiController = TextEditingController();
   int? _selectedFakultasId;
@@ -398,7 +413,7 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
       _nameController.text = widget.initialData!['name'] ?? '';
       _kodeProdiController.text = widget.initialData!['kode_prodi'] ?? '';
       _kaprodiController.text = widget.initialData!['kaprodi'] ?? '';
-      _selectedFakultasId = widget.initialData!['fakultas_id'] is List 
+      _selectedFakultasId = widget.initialData!['fakultas_id'] is List
           ? widget.initialData!['fakultas_id'][0]
           : widget.initialData!['fakultas_id'];
     }
@@ -432,6 +447,69 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
       widget.onSubmit(newProdi);
       Navigator.of(context).pop();
     }
+  }
+
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.3),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            "Konfirmasi Update",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.orangeAccent),
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            "Apakah Anda yakin ingin mengupdate data ini?",
+            style: TextStyle(fontSize: 14, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: const Text(
+                    "Tidak",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                      _submit();
+                    }, // Proceed with update
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text(
+                      "Ya",
+                      style: TextStyle(color: Colors.white),
+                    ))
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -521,7 +599,9 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _submit,
+                onPressed: widget.initialData == null
+                    ? _submit
+                    : _showConfirmationDialog,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                       vertical: 16.0, horizontal: 32.0),
@@ -543,4 +623,3 @@ class _ProdiFormModalState extends State<ProdiFormModal> {
     );
   }
 }
-
