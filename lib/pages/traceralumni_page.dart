@@ -16,12 +16,14 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
   List<dynamic> _filteredTracerData = [];
   bool _loading = true;
   String _searchQuery = "";
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     odoo = OdooConnection(url: dotenv.env['URL'] ?? "");
     _filteredTracerData = [];
+    _checkAdminStatus();
     _fetchData();
   }
 
@@ -49,6 +51,22 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
       print("Error fetching initial data: $e");
     } finally {
       setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _checkAdminStatus() async {
+    try {
+      // Fetch user credentials
+      final user = await odoo.getUser();
+      
+      // Check if the user is "Administrator"
+      if (user.toLowerCase() == "administrator") {
+        setState(() {
+          _isAdmin = true; // Set flag to true if user is admin
+        });
+      }
+    } catch (e) {
+      print("Error checking admin status: $e");
     }
   }
 
@@ -291,7 +309,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                                     trailing: const Icon(
                                         Icons.arrow_forward_ios,
                                         color: Colors.orangeAccent),
-                                    onTap: () {
+                                    onTap: _isAdmin ? () {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -410,7 +428,7 @@ class _TracerAlumniPageState extends State<TracerAlumniPage> {
                                           );
                                         },
                                       );
-                                    },
+                                    } : null,
                                   ),
                                 );
                               },

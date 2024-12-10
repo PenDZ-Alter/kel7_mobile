@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="tugas1_ui"
+        android:label="Alumni Finder"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

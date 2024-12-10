@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:odoo_rpc/odoo_rpc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OdooConnection {
   final OdooClient _odoo;
@@ -9,10 +10,61 @@ class OdooConnection {
   OdooConnection({required String url}) :
     _odoo = OdooClient(url);
 
+  Future<void> saveCreds(String user) async {
+    try {
+      final creds = await SharedPreferences.getInstance();
+      await creds.setString('user', user);
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<String> getUser() async {
+    final creds = await SharedPreferences.getInstance();
+    String user = await creds.getString('user') ?? "";
+
+    return user;
+  }
+
+  Future<String> getEmail() async {
+    final creds = await SharedPreferences.getInstance();
+    String email = await creds.getString('username') ?? "";
+
+    return email;
+  }
+
+  Future<String> getPass() async {
+    final creds = await SharedPreferences.getInstance();
+    String user = await creds.getString('password') ?? "";
+
+    return user;
+  }
+
+  Future<void> cleanCreds() async {
+    final creds = await SharedPreferences.getInstance();
+    await creds.remove('user');
+    await creds.remove('password');
+  }
+
   Future<dynamic> auth(String db, String user, String pass) async {
     try {
       _session = await _odoo.authenticate(db, user, pass);
+
+      await this.saveCreds(_session.userName);
+
       return _session;
+    } on OdooException catch (err) {
+      print('Error: $err');
+      return null;
+    }
+  }
+
+  Future<dynamic> logout() async {
+    try {
+      _session = null;
+      await this.cleanCreds();
+
+      return 0;
     } on OdooException catch (err) {
       print('Error: $err');
       return null;
@@ -213,5 +265,4 @@ class OdooConnection {
       print('Error: $e');
     }
   }
-
 }

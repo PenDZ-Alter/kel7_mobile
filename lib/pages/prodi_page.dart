@@ -21,11 +21,13 @@ class _ProdiPageState extends State<ProdiPage> {
   int _offset = 0;
   bool _allFetched = false;
   String _searchQuery = "";
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     odoo = OdooConnection(url: dotenv.env['URL'] ?? "");
+    _checkAdminStatus();
     _fetchProdiData();
   }
 
@@ -62,6 +64,22 @@ class _ProdiPageState extends State<ProdiPage> {
           _offset += _limit;
         }
       });
+    }
+  }
+
+  Future<void> _checkAdminStatus() async {
+    try {
+      // Fetch user credentials
+      final user = await odoo.getUser();
+      
+      // Check if the user is "Administrator"
+      if (user.toLowerCase() == "administrator") {
+        setState(() {
+          _isAdmin = true; // Set flag to true if user is admin
+        });
+      }
+    } catch (e) {
+      print("Error checking admin status: $e");
     }
   }
 
@@ -304,7 +322,7 @@ class _ProdiPageState extends State<ProdiPage> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 2.0, vertical: 6.0),
-                          child: RefreshIndicator(
+                          child: _isAdmin ? RefreshIndicator(
                             onRefresh: _fetchProdiData,
                             child: ListView.builder(
                               itemCount: _filteredProdiData.length +
@@ -366,17 +384,17 @@ class _ProdiPageState extends State<ProdiPage> {
                                 );
                               },
                             ),
-                          ),
+                          ) : const Text("You're not an admin!"),
                         ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _isAdmin ? FloatingActionButton(
         onPressed: _openAddProdiModal,
         child: const Icon(Icons.add),
         backgroundColor: Colors.orangeAccent,
-      ),
+      ) : null,
     );
   }
 }

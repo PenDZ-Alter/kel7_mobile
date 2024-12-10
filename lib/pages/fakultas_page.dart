@@ -18,11 +18,13 @@ class _FakultasPageState extends State<FakultasPage> {
   int _offset = 0;
   bool _allFetched = false;
   String _searchQuery = "";
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     odoo = OdooConnection(url: dotenv.env['URL'] ?? "");
+    _checkAdminStatus();
     _fetchFakultasData();
   }
 
@@ -53,6 +55,22 @@ class _FakultasPageState extends State<FakultasPage> {
           _offset += _limit;
         }
       });
+    }
+  }
+
+  Future<void> _checkAdminStatus() async {
+    try {
+      // Fetch user credentials
+      final user = await odoo.getUser();
+      
+      // Check if the user is "Administrator"
+      if (user.toLowerCase() == "administrator") {
+        setState(() {
+          _isAdmin = true; // Set flag to true if user is admin
+        });
+      }
+    } catch (e) {
+      print("Error checking admin status: $e");
     }
   }
 
@@ -204,7 +222,7 @@ class _FakultasPageState extends State<FakultasPage> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 4.0),
-                          child: RefreshIndicator(
+                          child: _isAdmin ? RefreshIndicator(
                             onRefresh: _fetchFakultasData,
                             child: ListView.builder(
                               itemCount: _FilteredfakultasData.length +
@@ -431,18 +449,18 @@ class _FakultasPageState extends State<FakultasPage> {
                                 );
                               },
                             ),
-                          ),
+                          ) : const Text("You're not an admin!"),
                         ),
             ),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _isAdmin ? FloatingActionButton(
         onPressed: _openAddFakultasModal,
         child: const Icon(Icons.add),
         backgroundColor: Colors.orangeAccent,
-      ),
+      ) : null,
     );
   }
 }
